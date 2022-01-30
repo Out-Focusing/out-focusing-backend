@@ -10,7 +10,7 @@ class TestController {
 
     @GetMapping
     fun getTest(): String {
-        return "Test #3"
+        return "Test #4"
     }
 
 }
