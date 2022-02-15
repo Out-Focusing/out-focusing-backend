@@ -1,5 +1,6 @@
 package com.out_focusing.out_focusing_backend.album.domain
 
+import com.out_focusing.out_focusing_backend.post.domain.Post
 import com.out_focusing.out_focusing_backend.user.domain.UserProfile
 import org.hibernate.annotations.CreationTimestamp
 import java.time.LocalDateTime
@@ -30,7 +31,9 @@ class Album(
         joinColumns = [JoinColumn(name = "user_id")],
         inverseJoinColumns = [JoinColumn(name = "album_id")]
     )
-    val bookmarkUsers: Set<UserProfile>
+    val bookmarkUsers: Set<UserProfile>,
+    @OneToMany(mappedBy = "album", cascade = [CascadeType.REMOVE], fetch = FetchType.LAZY)
+    val posts: Set<Post>
 ) {
 
 }
