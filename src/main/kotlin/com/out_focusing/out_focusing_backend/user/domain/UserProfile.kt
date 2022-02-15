@@ -1,5 +1,6 @@
 package com.out_focusing.out_focusing_backend.user.domain
 
+import com.out_focusing.out_focusing_backend.album.domain.Album
 import javax.persistence.*
 
 @Entity
@@ -32,7 +33,9 @@ class UserProfile(
         joinColumns = [JoinColumn(name = "blocking_id")],
         inverseJoinColumns = [JoinColumn(name = "blocked_id")]
         )
-    val blockedUsers: Set<UserProfile>
+    val blockedUsers: Set<UserProfile>,
+    @OneToMany(mappedBy = "writerUserProfile", fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
+    val albums: Set<Album>
 ) {
 
 }
