@@ -1,2 +1,8 @@
 server:
   port: 8393
+spring:
+  jpa:
+    show-sql: true
+logging:
+  level:
+    org.hibernate.SQL: debug
