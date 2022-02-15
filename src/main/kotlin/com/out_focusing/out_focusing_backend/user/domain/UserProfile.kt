@@ -35,7 +35,13 @@ class UserProfile(
         )
     val blockedUsers: Set<UserProfile>,
     @OneToMany(mappedBy = "writerUserProfile", fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
-    val albums: Set<Album>
+    val albums: Set<Album>,
+    @ManyToMany(cascade = [CascadeType.REMOVE], fetch = FetchType.LAZY)
+    @JoinTable(name = "album_bookmark",
+            joinColumns = [JoinColumn(name = "album_id")],
+        inverseJoinColumns = [JoinColumn(name = "user_id")]
+        )
+    val bookmarkAlbums: Set<Album>
 ) {
 
 }

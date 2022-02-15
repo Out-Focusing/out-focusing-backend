@@ -23,7 +23,14 @@ class Album(
     @Column(name = "created_at")
     val createdAt: LocalDateTime,
     @Column
-    val secret: Boolean
+    val secret: Boolean,
+    @ManyToMany(cascade = [CascadeType.REMOVE], fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "album_bookmark",
+        joinColumns = [JoinColumn(name = "user_id")],
+        inverseJoinColumns = [JoinColumn(name = "album_id")]
+    )
+    val bookmarkUsers: Set<UserProfile>
 ) {
 
 }
