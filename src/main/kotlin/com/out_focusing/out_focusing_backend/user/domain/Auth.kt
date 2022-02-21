@@ -6,10 +6,12 @@ import javax.persistence.*
 @Table(name = "auth")
 class Auth(
     @Id
+    val userId: String,
+    @MapsId
     @OneToOne
     @JoinColumn(name = "user_id")
-    val userId: UserProfile,
+    val userProfile: UserProfile,
     @Column(length = 20)
     val password: String
-): java.io.Serializable {
+) {
 }
