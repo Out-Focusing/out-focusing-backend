@@ -6,3 +6,6 @@ spring:
 logging:
   level:
     org.hibernate.SQL: debug
+out-focusing:
+  access-token-secret-key: "${ACCESS_TOKEN_SECRET_KEY}"
+  refresh-token-secret-key: "${REFRESH_TOKEN_SECRET_KEY}"

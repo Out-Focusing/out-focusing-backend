@@ -13,10 +13,10 @@ import java.util.*
 @Component
 class JwtUtil {
 
-    @Value("\${out_focusing.access_token_secret_key}")
+    @Value("\${out-focusing.access-token-secret-key}")
     private lateinit var accessTokenSecretKey: String
 
-    @Value("\${out_focusing.refresh_token_secret_key}")
+    @Value("\${out-focusing.refresh-token-secret-key}")
     private lateinit var refreshSecretKey: String
 
     companion object {
