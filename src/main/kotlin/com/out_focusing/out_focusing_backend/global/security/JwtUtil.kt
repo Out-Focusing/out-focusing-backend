@@ -20,7 +20,7 @@ class JwtUtil {
     private lateinit var refreshSecretKey: String
 
     companion object {
-        private const val accessTokenExpireTime = 1000 * 20
+        private const val accessTokenExpireTime = 1000 * 60 * 20
         private const val refreshTokenExpireTime = 1000 * 60 * 60 * 24 * 7
     }
 

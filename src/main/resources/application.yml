@@ -3,9 +3,25 @@ server:
 spring:
   jpa:
     show-sql: true
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
 logging:
   level:
     org.hibernate.SQL: debug
+    com.amazonaws.util.EC2MetadataUtils: error
 out-focusing:
   access-token-secret-key: "${ACCESS_TOKEN_SECRET_KEY}"
   refresh-token-secret-key: "${REFRESH_TOKEN_SECRET_KEY}"
+cloud:
+  aws:
+    credentials:
+      access-key: ${s3.ACCESS_KEY}
+      secret-key: ${s3.SECRET_KEY}
+    region:
+      static: ${s3.REGION}
+    s3:
+      bucket: ${s3.BUCKET}
+    stack:
+      auto: false
