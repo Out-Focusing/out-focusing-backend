@@ -39,7 +39,7 @@ class SecurityConfig(
         http.addFilterBefore(filter, CsrfFilter::class.java)
 
         http.csrf().disable()
-            .authorizeRequests().antMatchers("/h2-console/**" ,"/v1/auth/register", "/v1/auth/login", "/v1/auth/token").permitAll().anyRequest().authenticated()
+            .authorizeRequests().antMatchers("/swagger-ui/**", "/v3/api-docs/**" , "/h2-console/**" ,"/v1/auth/register", "/v1/auth/login", "/v1/auth/token").permitAll().anyRequest().authenticated()
             .and().exceptionHandling().and().sessionManagement()
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and().headers().frameOptions().disable()
