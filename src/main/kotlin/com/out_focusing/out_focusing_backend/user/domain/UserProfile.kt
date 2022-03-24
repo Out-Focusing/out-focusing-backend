@@ -1,6 +1,7 @@
 package com.out_focusing.out_focusing_backend.user.domain
 
 import com.out_focusing.out_focusing_backend.album.domain.Album
+import com.out_focusing.out_focusing_backend.album.domain.AlbumBookmark
 import com.out_focusing.out_focusing_backend.post.domain.Post
 import javax.persistence.*
 
@@ -40,13 +41,8 @@ class UserProfile(
     val blockedUsers: Set<UserProfile>,
     @OneToMany(mappedBy = "writerUserProfile", fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
     val albums: Set<Album>,
-    @ManyToMany(cascade = [CascadeType.REMOVE], fetch = FetchType.LAZY)
-    @JoinTable(
-        name = "album_bookmark",
-        joinColumns = [JoinColumn(name = "album_id")],
-        inverseJoinColumns = [JoinColumn(name = "user_id")]
-    )
-    val bookmarkAlbums: Set<Album>,
+    @OneToMany(mappedBy = "albumBookmarkId.userProfile", fetch = FetchType.LAZY)
+    val bookmarkAlbums: Set<AlbumBookmark>,
     @OneToMany(cascade = [CascadeType.REMOVE], fetch = FetchType.LAZY, mappedBy = "writerUserProfile")
     val posts: Set<Post>,
     @ManyToMany(cascade = [CascadeType.REMOVE], fetch = FetchType.LAZY)

@@ -9,10 +9,6 @@ import javax.persistence.*
 @Entity
 @Table(name = "album")
 class Album(
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "album_id")
-    val albumId: Long,
     @JoinColumn(name = "writer_user_id")
     @ManyToOne(fetch = FetchType.LAZY)
     val writerUserProfile: UserProfile,
@@ -20,20 +16,18 @@ class Album(
     val title: String,
     @Column(length = 300)
     val content: String,
+    @Column
+    val secret: Boolean
+) {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "album_id")
+    val albumId: Long = 0
     @CreationTimestamp
     @Column(name = "created_at")
-    val createdAt: LocalDateTime,
-    @Column
-    val secret: Boolean,
-    @ManyToMany(cascade = [CascadeType.REMOVE], fetch = FetchType.LAZY)
-    @JoinTable(
-        name = "album_bookmark",
-        joinColumns = [JoinColumn(name = "user_id")],
-        inverseJoinColumns = [JoinColumn(name = "album_id")]
-    )
-    val bookmarkUsers: Set<UserProfile>,
+    lateinit var createdAt: LocalDateTime
+    @OneToMany(mappedBy = "albumBookmarkId.album", fetch = FetchType.LAZY)
+    val bookmarkUsers: Set<AlbumBookmark> = setOf()
     @OneToMany(mappedBy = "album", cascade = [CascadeType.REMOVE], fetch = FetchType.LAZY)
-    val posts: Set<Post>
-) {
-
+    val posts: Set<Post> = setOf()
 }
