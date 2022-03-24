@@ -17,17 +17,22 @@ class Album(
     @Column(length = 300)
     val content: String,
     @Column
-    val secret: Boolean
+    val secret: Boolean,
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "album_id")
     val albumId: Long = 0
+
     @CreationTimestamp
     @Column(name = "created_at")
     lateinit var createdAt: LocalDateTime
-    @OneToMany(mappedBy = "albumBookmarkId.album", fetch = FetchType.LAZY)
+
+    @OneToMany(mappedBy = "albumBookmarkId.album",
+        fetch = FetchType.LAZY,
+        orphanRemoval = true)
     val bookmarkUsers: Set<AlbumBookmark> = setOf()
+
     @OneToMany(mappedBy = "album", cascade = [CascadeType.REMOVE], fetch = FetchType.LAZY)
     val posts: Set<Post> = setOf()
 }

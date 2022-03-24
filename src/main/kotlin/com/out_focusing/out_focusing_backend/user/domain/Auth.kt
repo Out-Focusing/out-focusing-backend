@@ -8,7 +8,7 @@ class Auth(
     @Id
     val userId: String,
     @MapsId
-    @OneToOne(cascade = [CascadeType.ALL])
+    @OneToOne(cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     val userProfile: UserProfile,
     @Column(length = 255)
