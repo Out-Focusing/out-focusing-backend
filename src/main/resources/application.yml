@@ -2,7 +2,10 @@ server:
   port: 8393
 spring:
   jpa:
-    show-sql: true
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
   servlet:
     multipart:
       max-file-size: 50MB
