@@ -21,4 +21,11 @@ class AlbumApi(private val albumApplication: AlbumApplication) {
         return albumApplication.generateAlbum(requestBody)
     }
 
+    @Operation(summary = "앨범 삭제")
+    @DeleteMapping("/{albumId}")
+    @ResponseStatus(HttpStatus.OK)
+    fun removeAlbum(@PathVariable albumId: Long) {
+        albumApplication.removeAlbum(albumId, )
+    }
+
 }
