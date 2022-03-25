@@ -3,6 +3,7 @@ package com.out_focusing.out_focusing_backend.album.application
 import com.out_focusing.out_focusing_backend.album.domain.Album
 import com.out_focusing.out_focusing_backend.album.dto.GenerateAlbumRequest
 import com.out_focusing.out_focusing_backend.album.dto.GenerateAlbumResponse
+import com.out_focusing.out_focusing_backend.album.dto.ModifyAlbumRequest
 import com.out_focusing.out_focusing_backend.album.repository.AlbumRepository
 import com.out_focusing.out_focusing_backend.global.error.CustomException
 import com.out_focusing.out_focusing_backend.user.repository.UserProfileRepository
@@ -53,6 +54,26 @@ class AlbumApplication(
         }
 
         albumRepository.removeAlbum(removeAlbum)
+    }
+
+    @Transactional
+    fun modifyAlbum(albumId: Long, requestBody: ModifyAlbumRequest) {
+        val userDetails = SecurityContextHolder.getContext().authentication.principal as UserDetails
+        val userId = userDetails.username
+
+        val modifyAlbum = albumRepository.findById(albumId).orElseThrow { throw CustomException(HttpStatus.NOT_FOUND, "") }
+
+        if(modifyAlbum.writerUserProfile.userId != userId) {
+            throw CustomException(HttpStatus.FORBIDDEN, "권한이 없습니다")
+        }
+
+        requestBody.apply {
+            title?.apply { modifyAlbum.title = this }
+            content?.apply { modifyAlbum.content = this }
+            isSecret?.apply { modifyAlbum.secret = this }
+        }
+
+        albumRepository.save(modifyAlbum)
     }
 
 }

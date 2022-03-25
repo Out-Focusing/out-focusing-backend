@@ -13,11 +13,11 @@ class Album(
     @ManyToOne(fetch = FetchType.LAZY)
     val writerUserProfile: UserProfile,
     @Column(length = 40)
-    val title: String,
+    var title: String,
     @Column(length = 300)
-    val content: String,
+    var content: String,
     @Column
-    val secret: Boolean,
+    var secret: Boolean,
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
