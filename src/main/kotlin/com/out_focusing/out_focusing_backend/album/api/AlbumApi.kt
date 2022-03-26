@@ -26,7 +26,7 @@ class AlbumApi(private val albumApplication: AlbumApplication) {
     @DeleteMapping("/{albumId}")
     @ResponseStatus(HttpStatus.OK)
     fun removeAlbum(@PathVariable @Valid albumId: Long) {
-        albumApplication.removeAlbum(albumId, )
+        albumApplication.removeAlbum(albumId)
     }
 
     @Operation(summary = "앨범 수정")
@@ -35,5 +35,20 @@ class AlbumApi(private val albumApplication: AlbumApplication) {
     fun updateAlbum(@PathVariable @Valid albumId: Long, @RequestBody @Valid requestBody: ModifyAlbumRequest) {
         albumApplication.modifyAlbum(albumId, requestBody)
     }
+    
+    @Operation(summary = "앨범 북마크")
+    @PostMapping("bookmark/{albumId}")
+    @ResponseStatus(HttpStatus.CREATED)
+    fun addAlbumBookmark(@PathVariable albumId: Long) {
+        albumApplication.addAlbumBookmark(albumId)
+    }
+
+    @Operation(summary = "앨범 북마크 취소")
+    @DeleteMapping("bookmark/{albumId}")
+    @ResponseStatus(HttpStatus.OK)
+    fun cancelAlbumBookmark(@PathVariable albumId: Long) {
+        albumApplication.cancelAlbumBookmark(albumId)
+    }
+
 
 }

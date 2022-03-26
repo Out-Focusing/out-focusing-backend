@@ -1,9 +1,11 @@
 package com.out_focusing.out_focusing_backend.album.application
 
 import com.out_focusing.out_focusing_backend.album.domain.Album
+import com.out_focusing.out_focusing_backend.album.domain.AlbumBookmark
 import com.out_focusing.out_focusing_backend.album.dto.GenerateAlbumRequest
 import com.out_focusing.out_focusing_backend.album.dto.GenerateAlbumResponse
 import com.out_focusing.out_focusing_backend.album.dto.ModifyAlbumRequest
+import com.out_focusing.out_focusing_backend.album.repository.AlbumBookmarkRepository
 import com.out_focusing.out_focusing_backend.album.repository.AlbumRepository
 import com.out_focusing.out_focusing_backend.global.error.CustomException
 import com.out_focusing.out_focusing_backend.user.repository.UserProfileRepository
@@ -18,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional
 class AlbumApplication(
     private val albumRepository: AlbumRepository,
     private val userProfileRepository: UserProfileRepository,
+    private val albumBookmarkRepository: AlbumBookmarkRepository
 ) {
 
     @Transactional
@@ -47,9 +50,10 @@ class AlbumApplication(
         val userDetails = SecurityContextHolder.getContext().authentication.principal as UserDetails
         val userId = userDetails.username
 
-        val removeAlbum = albumRepository.findById(albumId).orElseThrow { throw CustomException(HttpStatus.NOT_FOUND, "")}
+        val removeAlbum =
+            albumRepository.findById(albumId).orElseThrow { throw CustomException(HttpStatus.NOT_FOUND, "") }
 
-        if(removeAlbum.writerUserProfile.userId != userId) {
+        if (removeAlbum.writerUserProfile.userId != userId) {
             throw CustomException(HttpStatus.FORBIDDEN, "권한이 없습니다")
         }
 
@@ -61,9 +65,10 @@ class AlbumApplication(
         val userDetails = SecurityContextHolder.getContext().authentication.principal as UserDetails
         val userId = userDetails.username
 
-        val modifyAlbum = albumRepository.findById(albumId).orElseThrow { throw CustomException(HttpStatus.NOT_FOUND, "") }
+        val modifyAlbum =
+            albumRepository.findById(albumId).orElseThrow { throw CustomException(HttpStatus.NOT_FOUND, "") }
 
-        if(modifyAlbum.writerUserProfile.userId != userId) {
+        if (modifyAlbum.writerUserProfile.userId != userId) {
             throw CustomException(HttpStatus.FORBIDDEN, "권한이 없습니다")
         }
 
@@ -75,5 +80,37 @@ class AlbumApplication(
 
         albumRepository.save(modifyAlbum)
     }
+
+    @Transactional
+    fun addAlbumBookmark(albumId: Long) {
+        val userDetails = SecurityContextHolder.getContext().authentication.principal as UserDetails
+        val userId = userDetails.username
+
+        val userProfile =
+            userProfileRepository.findById(userId).orElseThrow { throw CustomException(HttpStatus.NOT_FOUND, "") }
+        val album = albumRepository.findById(albumId).orElseThrow { throw CustomException(HttpStatus.NOT_FOUND, "") }
+
+        val albumBookmarkId = AlbumBookmark.AlbumBookmarkId(userProfile, album)
+
+        albumBookmarkRepository.findById(albumBookmarkId).ifPresent { throw CustomException(HttpStatus.CONFLICT, "") }
+
+        albumBookmarkRepository.save(AlbumBookmark(albumBookmarkId))
+    }
+
+    @Transactional
+    fun cancelAlbumBookmark(albumId: Long) {
+        val userDetails = SecurityContextHolder.getContext().authentication.principal as UserDetails
+        val userId = userDetails.username
+
+        val userProfile =
+            userProfileRepository.findById(userId).orElseThrow { throw CustomException(HttpStatus.NOT_FOUND, "") }
+        val album = albumRepository.findById(albumId).orElseThrow { throw CustomException(HttpStatus.NOT_FOUND, "") }
+
+        val albumBookmark = albumBookmarkRepository.findById(AlbumBookmark.AlbumBookmarkId(userProfile, album))
+            .orElseThrow { throw CustomException(HttpStatus.NOT_FOUND, "") }
+
+        albumBookmarkRepository.delete(albumBookmark)
+    }
+
 
 }
