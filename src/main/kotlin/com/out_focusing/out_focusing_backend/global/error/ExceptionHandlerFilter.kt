@@ -1,5 +1,6 @@
 package com.out_focusing.out_focusing_backend.global.error
 
+import com.out_focusing.out_focusing_backend.global.error.CustomException.*
 import io.jsonwebtoken.ExpiredJwtException
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
@@ -20,7 +21,7 @@ class ExceptionHandlerFilter : OncePerRequestFilter() {
         } catch (exception: CustomException) {
             setErrorResponse(exception.code, response, exception)
         } catch (_: ExpiredJwtException) {
-            setErrorResponse(HttpStatus.UNAUTHORIZED, response, CustomException(HttpStatus.UNAUTHORIZED, "토큰 기한이 만료되었습니다."))
+            setErrorResponse(HttpStatus.UNAUTHORIZED, response, TokenTimeExpiredException)
         } catch (exception: RuntimeException) {
             setErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, response, exception)
         }

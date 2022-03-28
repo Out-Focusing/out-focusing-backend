@@ -7,9 +7,8 @@ import com.out_focusing.out_focusing_backend.album.dto.GenerateAlbumResponse
 import com.out_focusing.out_focusing_backend.album.dto.ModifyAlbumRequest
 import com.out_focusing.out_focusing_backend.album.repository.AlbumBookmarkRepository
 import com.out_focusing.out_focusing_backend.album.repository.AlbumRepository
-import com.out_focusing.out_focusing_backend.global.error.CustomException
+import com.out_focusing.out_focusing_backend.global.error.CustomException.*
 import com.out_focusing.out_focusing_backend.user.repository.UserProfileRepository
-import org.springframework.http.HttpStatus
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.stereotype.Service
@@ -29,7 +28,7 @@ class AlbumApplication(
         val userId = userDetails.username
 
         val userProfile =
-            userProfileRepository.findById(userId).orElseThrow { throw CustomException(HttpStatus.NOT_FOUND, "") }
+            userProfileRepository.findById(userId).orElseThrow { UserNotExistsException }
 
         with(requestBody) {
             val generationAlbum = Album(
@@ -51,10 +50,10 @@ class AlbumApplication(
         val userId = userDetails.username
 
         val removeAlbum =
-            albumRepository.findById(albumId).orElseThrow { throw CustomException(HttpStatus.NOT_FOUND, "") }
+            albumRepository.findById(albumId).orElseThrow { AlbumNotFoundException }
 
         if (removeAlbum.writerUserProfile.userId != userId) {
-            throw CustomException(HttpStatus.FORBIDDEN, "권한이 없습니다")
+            throw AlbumDeleteForbiddenException
         }
 
         albumRepository.removeAlbum(removeAlbum)
@@ -66,10 +65,10 @@ class AlbumApplication(
         val userId = userDetails.username
 
         val modifyAlbum =
-            albumRepository.findById(albumId).orElseThrow { throw CustomException(HttpStatus.NOT_FOUND, "") }
+            albumRepository.findById(albumId).orElseThrow { AlbumNotFoundException }
 
         if (modifyAlbum.writerUserProfile.userId != userId) {
-            throw CustomException(HttpStatus.FORBIDDEN, "권한이 없습니다")
+            throw AlbumUpdateForbiddenException
         }
 
         requestBody.apply {
@@ -87,12 +86,12 @@ class AlbumApplication(
         val userId = userDetails.username
 
         val userProfile =
-            userProfileRepository.findById(userId).orElseThrow { throw CustomException(HttpStatus.NOT_FOUND, "") }
-        val album = albumRepository.findById(albumId).orElseThrow { throw CustomException(HttpStatus.NOT_FOUND, "") }
+            userProfileRepository.findById(userId).orElseThrow { UserNotExistsException }
+        val album = albumRepository.findById(albumId).orElseThrow { AlbumNotFoundException }
 
         val albumBookmarkId = AlbumBookmark.AlbumBookmarkId(userProfile, album)
 
-        albumBookmarkRepository.findById(albumBookmarkId).ifPresent { throw CustomException(HttpStatus.CONFLICT, "") }
+        albumBookmarkRepository.findById(albumBookmarkId).ifPresent { AlreadyAlbumBookmarkedException }
 
         albumBookmarkRepository.save(AlbumBookmark(albumBookmarkId))
     }
@@ -103,11 +102,11 @@ class AlbumApplication(
         val userId = userDetails.username
 
         val userProfile =
-            userProfileRepository.findById(userId).orElseThrow { throw CustomException(HttpStatus.NOT_FOUND, "") }
-        val album = albumRepository.findById(albumId).orElseThrow { throw CustomException(HttpStatus.NOT_FOUND, "") }
+            userProfileRepository.findById(userId).orElseThrow { UserNotFoundException }
+        val album = albumRepository.findById(albumId).orElseThrow { AlbumNotFoundException }
 
         val albumBookmark = albumBookmarkRepository.findById(AlbumBookmark.AlbumBookmarkId(userProfile, album))
-            .orElseThrow { throw CustomException(HttpStatus.NOT_FOUND, "") }
+            .orElseThrow { AlbumBookmarkNotFoundException }
 
         albumBookmarkRepository.delete(albumBookmark)
     }
