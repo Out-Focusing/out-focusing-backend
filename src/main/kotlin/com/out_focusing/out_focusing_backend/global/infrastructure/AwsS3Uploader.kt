@@ -5,9 +5,7 @@ import com.amazonaws.services.s3.AmazonS3
 import com.amazonaws.services.s3.Headers
 import com.amazonaws.services.s3.model.CannedAccessControlList
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest
-import com.out_focusing.out_focusing_backend.global.error.CustomException
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import java.util.*
 

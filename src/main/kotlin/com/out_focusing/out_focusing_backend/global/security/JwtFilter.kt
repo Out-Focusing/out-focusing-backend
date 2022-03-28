@@ -1,8 +1,7 @@
 package com.out_focusing.out_focusing_backend.global.security
 
-import com.out_focusing.out_focusing_backend.global.error.CustomException
+import com.out_focusing.out_focusing_backend.global.error.CustomException.*
 import io.jsonwebtoken.security.SignatureException
-import org.springframework.http.HttpStatus
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource
@@ -32,7 +31,7 @@ class JwtFilter(
                 try {
                     username = jwtUtil.extractUsername(accessToken)
                 } catch (exception: SignatureException) {
-                    throw CustomException(HttpStatus.UNAUTHORIZED, "토큰이 변조되었습니다.")
+                    throw WrongTokenException
                 }
 
                 if (SecurityContextHolder.getContext().authentication == null) {
