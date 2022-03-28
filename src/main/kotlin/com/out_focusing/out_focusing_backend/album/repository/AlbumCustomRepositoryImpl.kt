@@ -16,11 +16,13 @@ class AlbumCustomRepositoryImpl(
     override fun removeAlbum(album: Album) {
         val qAlbumBookmark = QAlbumBookmark.albumBookmark
         val qAlbum = QAlbum.album
+
         jpaQueryFactory.delete(qAlbumBookmark)
             .where(qAlbumBookmark.albumBookmarkId.album.eq(album))
             .execute()
 
-        jpaQueryFactory.delete(qAlbum)
+        jpaQueryFactory.update(qAlbum)
+            .set(qAlbum.deleted, true)
             .where(qAlbum.eq(album))
             .execute()
     }
