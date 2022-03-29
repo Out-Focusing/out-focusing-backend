@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
 
 @RestController
-@RequestMapping("/v1/album")
-@Tag(name = "앨범")
+@RequestMapping("/v1/albums")
+@Tag(name = "Album API")
 class AlbumApi(private val albumApplication: AlbumApplication) {
 
     @Operation(summary = "앨범 생성")
@@ -37,14 +37,14 @@ class AlbumApi(private val albumApplication: AlbumApplication) {
     }
     
     @Operation(summary = "앨범 북마크")
-    @PostMapping("bookmark/{albumId}")
+    @PostMapping("/{albumId}/bookmarks")
     @ResponseStatus(HttpStatus.CREATED)
     fun addAlbumBookmark(@PathVariable albumId: Long) {
         albumApplication.addAlbumBookmark(albumId)
     }
 
     @Operation(summary = "앨범 북마크 취소")
-    @DeleteMapping("bookmark/{albumId}")
+    @DeleteMapping("/{albumId}/bookmarks")
     @ResponseStatus(HttpStatus.OK)
     fun cancelAlbumBookmark(@PathVariable albumId: Long) {
         albumApplication.cancelAlbumBookmark(albumId)
