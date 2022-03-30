@@ -89,11 +89,13 @@ class AlbumApplication(
             userProfileRepository.findById(userId).orElseThrow { UserNotExistsException }
         val album = albumRepository.findById(albumId).orElseThrow { AlbumNotFoundException }
 
-        val albumBookmarkId = AlbumBookmark.AlbumBookmarkId(userProfile, album)
+        val albumBookmark = AlbumBookmark(userProfile, album)
 
-        albumBookmarkRepository.findById(albumBookmarkId).ifPresent { AlreadyAlbumBookmarkedException }
+        if (albumBookmarkRepository.existsAlbumBookmarkByUserProfileAndAlbum(userProfile, album)) {
+            throw AlreadyAlbumBookmarkedException
+        }
 
-        albumBookmarkRepository.save(AlbumBookmark(albumBookmarkId))
+        albumBookmarkRepository.save(albumBookmark)
     }
 
     @Transactional
@@ -105,10 +107,13 @@ class AlbumApplication(
             userProfileRepository.findById(userId).orElseThrow { UserNotFoundException }
         val album = albumRepository.findById(albumId).orElseThrow { AlbumNotFoundException }
 
-        val albumBookmark = albumBookmarkRepository.findById(AlbumBookmark.AlbumBookmarkId(userProfile, album))
-            .orElseThrow { AlbumBookmarkNotFoundException }
+        if (!albumBookmarkRepository.existsAlbumBookmarkByUserProfileAndAlbum(userProfile, album))
+            throw AlbumBookmarkNotFoundException
 
-        albumBookmarkRepository.delete(albumBookmark)
+        albumBookmarkRepository.deleteAlbumBookmarkByUserProfileAndAlbum(userProfile, album)
+    }
+
+
     }
 
 
