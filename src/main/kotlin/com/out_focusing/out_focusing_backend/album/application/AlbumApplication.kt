@@ -2,6 +2,7 @@ package com.out_focusing.out_focusing_backend.album.application
 
 import com.out_focusing.out_focusing_backend.album.domain.Album
 import com.out_focusing.out_focusing_backend.album.domain.AlbumBookmark
+import com.out_focusing.out_focusing_backend.album.dto.AlbumSummaryResponse
 import com.out_focusing.out_focusing_backend.album.dto.GenerateAlbumRequest
 import com.out_focusing.out_focusing_backend.album.dto.GenerateAlbumResponse
 import com.out_focusing.out_focusing_backend.album.dto.ModifyAlbumRequest
@@ -114,7 +115,16 @@ class AlbumApplication(
         albumBookmarkRepository.deleteAlbumBookmarkByUserProfileAndAlbum(userProfile, album)
     }
 
+    fun getMyAlbum(): List<AlbumSummaryResponse> {
+        val userDetails = SecurityContextHolder.getContext().authentication.principal as UserDetails
+        val userId = userDetails.username
 
+        val userProfile =
+            userProfileRepository.findById(userId).orElseThrow { UserNotExistsException }
+
+        return albumRepository.getMyAlbum(userProfile).map { album ->
+            AlbumSummaryResponse.toAlbumSummaryResponse(album, userProfile)
+        }
     }
 
 

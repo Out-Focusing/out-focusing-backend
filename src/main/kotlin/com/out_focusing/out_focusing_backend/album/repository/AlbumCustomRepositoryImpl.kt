@@ -3,7 +3,6 @@ package com.out_focusing.out_focusing_backend.album.repository
 import com.out_focusing.out_focusing_backend.album.domain.Album
 import com.out_focusing.out_focusing_backend.album.domain.QAlbum
 import com.out_focusing.out_focusing_backend.album.domain.QAlbumBookmark
-import com.out_focusing.out_focusing_backend.user.domain.QUserProfile
 import com.out_focusing.out_focusing_backend.user.domain.UserProfile
 import com.querydsl.jpa.impl.JPAQueryFactory
 import org.springframework.stereotype.Repository
@@ -27,6 +26,22 @@ class AlbumCustomRepositoryImpl(
             .set(qAlbum.deleted, true)
             .where(qAlbum.eq(album))
             .execute()
+    }
+
+    override fun getMyAlbum(userProfile: UserProfile): List<Album> {
+        jpaQueryFactory.selectFrom(QAlbumBookmark.albumBookmark)
+            .leftJoin(QAlbumBookmark.albumBookmark.album)
+            .fetchJoin()
+            .leftJoin(QAlbumBookmark.albumBookmark.userProfile)
+            .fetchJoin()
+            .where(QAlbumBookmark.albumBookmark.album.writerUserProfile.eq(userProfile))
+            .fetch()
+
+        return jpaQueryFactory.selectFrom(QAlbum.album)
+            .leftJoin(QAlbum.album.bookmarkUsers)
+            .fetchJoin()
+            .where(QAlbum.album.writerUserProfile.eq(userProfile))
+            .fetch()
     }
 
 }

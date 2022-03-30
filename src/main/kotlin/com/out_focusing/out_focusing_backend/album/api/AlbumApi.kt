@@ -1,6 +1,7 @@
 package com.out_focusing.out_focusing_backend.album.api
 
 import com.out_focusing.out_focusing_backend.album.application.AlbumApplication
+import com.out_focusing.out_focusing_backend.album.dto.AlbumSummaryResponse
 import com.out_focusing.out_focusing_backend.album.dto.GenerateAlbumRequest
 import com.out_focusing.out_focusing_backend.album.dto.GenerateAlbumResponse
 import com.out_focusing.out_focusing_backend.album.dto.ModifyAlbumRequest
@@ -50,5 +51,11 @@ class AlbumApi(private val albumApplication: AlbumApplication) {
         albumApplication.cancelAlbumBookmark(albumId)
     }
 
+    @Operation(summary = "자신이 작성한 앨범 조회")
+    @GetMapping("/my")
+    @ResponseStatus(HttpStatus.OK)
+    fun getMyAlbum(): List<AlbumSummaryResponse> {
+        return albumApplication.getMyAlbum()
+    }
 
 }
