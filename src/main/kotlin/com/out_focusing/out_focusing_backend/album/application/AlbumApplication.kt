@@ -35,7 +35,8 @@ class AlbumApplication(
                 writerUserProfile = userProfile,
                 title = title,
                 content = content,
-                secret = isSecret
+                secret = isSecret,
+                thumbnail = thumbnail
             )
 
             albumRepository.save(generationAlbum)
