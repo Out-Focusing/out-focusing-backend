@@ -127,5 +127,15 @@ class AlbumApplication(
         }
     }
 
+    fun getUserAlbum(userId: String): List<AlbumSummaryResponse> {
+        val userDetails = SecurityContextHolder.getContext().authentication.principal as UserDetails
+
+        val writer = userProfileRepository.findById(userId).orElseThrow { UserNotFoundException }
+        val userProfile = userProfileRepository.findById(userDetails.username).orElseThrow { UserNotFoundException }
+
+        return albumRepository.getUserAlbum(writer)
+            .map { album -> AlbumSummaryResponse.toAlbumSummaryResponse(album, userProfile) }
+    }
+
 
 }

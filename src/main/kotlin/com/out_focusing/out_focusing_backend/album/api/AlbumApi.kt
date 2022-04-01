@@ -58,4 +58,11 @@ class AlbumApi(private val albumApplication: AlbumApplication) {
         return albumApplication.getMyAlbum()
     }
 
+    @Operation(summary = "유저가 작성한 앨범 조회")
+    @GetMapping("/user/{userId}")
+    @ResponseStatus(HttpStatus.OK)
+    fun getUserAlbum(@PathVariable userId: String): List<AlbumSummaryResponse> {
+        return albumApplication.getUserAlbum(userId)
+    }
+
 }

@@ -44,4 +44,19 @@ class AlbumCustomRepositoryImpl(
             .fetch()
     }
 
+    override fun getUserAlbum(userProfile: UserProfile): List<Album> {
+        jpaQueryFactory.selectFrom(QAlbumBookmark.albumBookmark)
+            .leftJoin(QAlbumBookmark.albumBookmark.album)
+            .fetchJoin()
+            .leftJoin(QAlbumBookmark.albumBookmark.userProfile)
+            .fetchJoin()
+            .where(QAlbumBookmark.albumBookmark.album.writerUserProfile.eq(userProfile))
+
+        return jpaQueryFactory.selectFrom(QAlbum.album)
+            .leftJoin(QAlbum.album.bookmarkUsers)
+            .fetchJoin()
+            .where(QAlbum.album.writerUserProfile.eq(userProfile).and(QAlbum.album.secret.isFalse))
+            .distinct()
+            .fetch()
+    }
 }
