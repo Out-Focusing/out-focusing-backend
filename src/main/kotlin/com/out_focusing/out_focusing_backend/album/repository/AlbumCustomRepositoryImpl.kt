@@ -41,6 +41,7 @@ class AlbumCustomRepositoryImpl(
             .leftJoin(QAlbum.album.bookmarkUsers)
             .fetchJoin()
             .where(QAlbum.album.writerUserProfile.eq(userProfile))
+            .distinct()
             .fetch()
     }
 
