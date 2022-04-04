@@ -8,4 +8,5 @@ interface AlbumCustomRepository {
     fun removeAlbum(album: Album)
     fun getMyAlbum(userProfile: UserProfile): List<Album>
     fun getUserAlbum(userProfile: UserProfile): List<Album>
+    fun getAlbumDetail(albumId: Long, userProfile: UserProfile?): Album?
 }

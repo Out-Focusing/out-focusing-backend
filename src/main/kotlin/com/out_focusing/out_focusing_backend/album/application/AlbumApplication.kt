@@ -2,10 +2,7 @@ package com.out_focusing.out_focusing_backend.album.application
 
 import com.out_focusing.out_focusing_backend.album.domain.Album
 import com.out_focusing.out_focusing_backend.album.domain.AlbumBookmark
-import com.out_focusing.out_focusing_backend.album.dto.AlbumSummaryResponse
-import com.out_focusing.out_focusing_backend.album.dto.GenerateAlbumRequest
-import com.out_focusing.out_focusing_backend.album.dto.GenerateAlbumResponse
-import com.out_focusing.out_focusing_backend.album.dto.ModifyAlbumRequest
+import com.out_focusing.out_focusing_backend.album.dto.*
 import com.out_focusing.out_focusing_backend.album.repository.AlbumBookmarkRepository
 import com.out_focusing.out_focusing_backend.album.repository.AlbumRepository
 import com.out_focusing.out_focusing_backend.global.error.CustomException.*
@@ -114,6 +111,18 @@ class AlbumApplication(
 
         albumBookmarkRepository.deleteAlbumBookmarkByUserProfileAndAlbum(userProfile, album)
     }
+
+    fun getAlbumDetail(albumId: Long): AlbumDetailResponse {
+        val userDetails = SecurityContextHolder.getContext().authentication.principal as UserDetails
+        val userId = userDetails.username
+
+        val userProfile = userProfileRepository.findById(userId).orElseThrow { UserNotExistsException }
+
+        val album = albumRepository.getAlbumDetail(albumId, userProfile) ?: throw AlbumNotFoundException;
+
+        return AlbumDetailResponse.toAlbumDetailResponse(album, userProfile)
+    }
+
 
     fun getMyAlbum(): List<AlbumSummaryResponse> {
         val userDetails = SecurityContextHolder.getContext().authentication.principal as UserDetails

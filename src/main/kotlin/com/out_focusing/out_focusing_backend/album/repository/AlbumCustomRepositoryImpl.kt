@@ -60,4 +60,22 @@ class AlbumCustomRepositoryImpl(
             .distinct()
             .fetch()
     }
+
+    override fun getAlbumDetail(albumId: Long, userProfile: UserProfile?): Album? {
+        jpaQueryFactory.selectFrom(QAlbumBookmark.albumBookmark)
+            .leftJoin(QAlbumBookmark.albumBookmark.album)
+            .fetchJoin()
+            .leftJoin(QAlbumBookmark.albumBookmark.userProfile)
+            .fetchJoin()
+            .where(QAlbumBookmark.albumBookmark.album.albumId.eq(albumId))
+            .fetch()
+
+        val permission = QAlbum.album.writerUserProfile.eq(userProfile).or(QAlbum.album.secret.isFalse)
+
+        return jpaQueryFactory.selectFrom(QAlbum.album)
+            .leftJoin(QAlbum.album.bookmarkUsers)
+            .fetchJoin()
+            .where(QAlbum.album.albumId.eq(albumId).and(permission))
+            .fetchOne()
+    }
 }

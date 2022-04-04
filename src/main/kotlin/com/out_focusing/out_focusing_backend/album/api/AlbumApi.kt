@@ -1,10 +1,7 @@
 package com.out_focusing.out_focusing_backend.album.api
 
 import com.out_focusing.out_focusing_backend.album.application.AlbumApplication
-import com.out_focusing.out_focusing_backend.album.dto.AlbumSummaryResponse
-import com.out_focusing.out_focusing_backend.album.dto.GenerateAlbumRequest
-import com.out_focusing.out_focusing_backend.album.dto.GenerateAlbumResponse
-import com.out_focusing.out_focusing_backend.album.dto.ModifyAlbumRequest
+import com.out_focusing.out_focusing_backend.album.dto.*
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.HttpStatus
@@ -49,6 +46,12 @@ class AlbumApi(private val albumApplication: AlbumApplication) {
     @ResponseStatus(HttpStatus.OK)
     fun cancelAlbumBookmark(@PathVariable albumId: Long) {
         albumApplication.cancelAlbumBookmark(albumId)
+    }
+
+    @Operation(summary =  "앨범 상세 조회")
+    @GetMapping("/{albumId}")
+    fun getAlbumDetail(@PathVariable albumId: Long): AlbumDetailResponse {
+        return albumApplication.getAlbumDetail(albumId)
     }
 
     @Operation(summary = "자신이 작성한 앨범 조회")
