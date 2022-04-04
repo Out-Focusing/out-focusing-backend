@@ -57,6 +57,7 @@ class AuthApplication(
         }
     }
 
+    @Transactional
     fun loginUser(requestBody: UserLoginRequest): UserLoginResponse {
         try {
             authenticationManager.authenticate(
