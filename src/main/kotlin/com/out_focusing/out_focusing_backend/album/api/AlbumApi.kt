@@ -4,6 +4,7 @@ import com.out_focusing.out_focusing_backend.album.application.AlbumApplication
 import com.out_focusing.out_focusing_backend.album.dto.*
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
+import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
@@ -66,6 +67,12 @@ class AlbumApi(private val albumApplication: AlbumApplication) {
     @ResponseStatus(HttpStatus.OK)
     fun getUserAlbum(@PathVariable userId: String): List<AlbumSummaryResponse> {
         return albumApplication.getUserAlbum(userId)
+    }
+
+    @Operation(summary = "앨범 조회")
+    @GetMapping
+    fun getAlbum(pageable: Pageable): List<AlbumSummaryResponse> {
+        return albumApplication.getAlbum(pageable)
     }
 
 }

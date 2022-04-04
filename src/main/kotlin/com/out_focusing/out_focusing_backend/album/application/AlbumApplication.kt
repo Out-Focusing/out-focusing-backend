@@ -7,6 +7,7 @@ import com.out_focusing.out_focusing_backend.album.repository.AlbumBookmarkRepos
 import com.out_focusing.out_focusing_backend.album.repository.AlbumRepository
 import com.out_focusing.out_focusing_backend.global.error.CustomException.*
 import com.out_focusing.out_focusing_backend.user.repository.UserProfileRepository
+import org.springframework.data.domain.Pageable
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.stereotype.Service
@@ -143,6 +144,15 @@ class AlbumApplication(
         val userProfile = userProfileRepository.findById(userDetails.username).orElseThrow { UserNotFoundException }
 
         return albumRepository.getUserAlbum(writer)
+            .map { album -> AlbumSummaryResponse.toAlbumSummaryResponse(album, userProfile) }
+    }
+
+    fun getAlbum(pageable: Pageable): List<AlbumSummaryResponse> {
+        val userDetails = SecurityContextHolder.getContext().authentication.principal as UserDetails
+
+        val userProfile = userProfileRepository.findById(userDetails.username).orElseThrow { UserNotExistsException }
+
+        return albumRepository.getAlbum(pageable)
             .map { album -> AlbumSummaryResponse.toAlbumSummaryResponse(album, userProfile) }
     }
 

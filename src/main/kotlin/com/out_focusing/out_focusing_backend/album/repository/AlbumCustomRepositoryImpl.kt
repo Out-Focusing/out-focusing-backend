@@ -5,6 +5,7 @@ import com.out_focusing.out_focusing_backend.album.domain.QAlbum
 import com.out_focusing.out_focusing_backend.album.domain.QAlbumBookmark
 import com.out_focusing.out_focusing_backend.user.domain.UserProfile
 import com.querydsl.jpa.impl.JPAQueryFactory
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
 
@@ -52,6 +53,7 @@ class AlbumCustomRepositoryImpl(
             .leftJoin(QAlbumBookmark.albumBookmark.userProfile)
             .fetchJoin()
             .where(QAlbumBookmark.albumBookmark.album.writerUserProfile.eq(userProfile))
+            .fetch()
 
         return jpaQueryFactory.selectFrom(QAlbum.album)
             .leftJoin(QAlbum.album.bookmarkUsers)
@@ -77,5 +79,29 @@ class AlbumCustomRepositoryImpl(
             .fetchJoin()
             .where(QAlbum.album.albumId.eq(albumId).and(permission))
             .fetchOne()
+    }
+
+    override fun getAlbum(pageable: Pageable): List<Album> {
+
+        val subQuery = jpaQueryFactory.selectFrom(QAlbum.album)
+            .where(QAlbum.album.secret.isFalse)
+            .offset(pageable.offset)
+            .limit(pageable.pageSize.toLong())
+            .fetch()
+
+        jpaQueryFactory.selectFrom(QAlbumBookmark.albumBookmark)
+            .leftJoin(QAlbumBookmark.albumBookmark.album)
+            .fetchJoin()
+            .leftJoin(QAlbumBookmark.albumBookmark.userProfile)
+            .fetchJoin()
+            .where(QAlbumBookmark.albumBookmark.album.`in`(subQuery))
+            .fetch()
+
+        return jpaQueryFactory.selectFrom(QAlbum.album)
+            .leftJoin(QAlbum.album.bookmarkUsers)
+            .fetchJoin()
+            .where(QAlbum.album.`in`(subQuery))
+            .distinct()
+            .fetch()
     }
 }
