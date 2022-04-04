@@ -38,13 +38,13 @@ class AuthApplication(
                 contact = "",
                 profileImage = "",
                 readme = "",
-                followedUsers = emptySet(),
-                followingUsers = emptySet(),
-                blockedUsers = emptySet(),
-                albums = emptySet(),
-                bookmarkAlbums = emptySet(),
-                posts = emptySet(),
-                bookmarkPost = emptySet()
+                followedUsers = listOf(),
+                followingUsers = listOf(),
+                blockedUsers = listOf(),
+                albums = listOf(),
+                bookmarkAlbums = listOf(),
+                posts = listOf(),
+                bookmarkPost = listOf()
             )
 
             userProfileRepository.save(createdUserProfile)
@@ -57,6 +57,7 @@ class AuthApplication(
         }
     }
 
+    @Transactional
     fun loginUser(requestBody: UserLoginRequest): UserLoginResponse {
         try {
             authenticationManager.authenticate(

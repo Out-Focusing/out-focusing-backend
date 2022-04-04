@@ -7,5 +7,6 @@ data class GenerateAlbumRequest(
     val title: String,
     @field:Size(max = 300, message = "소개글의 길이가 300 이하여야 합니다")
     val content: String,
-    val isSecret: Boolean
+    val isSecret: Boolean,
+    val thumbnail: String
 )

@@ -9,12 +9,13 @@ import javax.persistence.*
 @Table(name = "user_profile")
 class UserProfile(
     @Id
+    @Column(name = "user_id")
     val userId: String,
     @Column(length = 20)
     val name: String,
     @Column(length = 30)
     val contact: String,
-    @Column(length = 100)
+    @Column(name = "profile_image", length = 100)
     val profileImage: String,
     @Column(length = 255)
     val readme: String,
@@ -24,34 +25,34 @@ class UserProfile(
         joinColumns = [JoinColumn(name = "following_id")],
         inverseJoinColumns = [JoinColumn(name = "followed_id")]
     )
-    val followedUsers: Set<UserProfile>,
+    val followedUsers: List<UserProfile>,
     @ManyToMany(cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
     @JoinTable(
         name = "followed_user",
         joinColumns = [JoinColumn(name = "followed_id")],
         inverseJoinColumns = [JoinColumn(name = "following_id")]
     )
-    val followingUsers: Set<UserProfile>,
+    val followingUsers: List<UserProfile>,
     @ManyToMany(cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
     @JoinTable(
         name = "blocked_user",
         joinColumns = [JoinColumn(name = "blocking_id")],
         inverseJoinColumns = [JoinColumn(name = "blocked_id")]
     )
-    val blockedUsers: Set<UserProfile>,
+    val blockedUsers: List<UserProfile>,
     @OneToMany(mappedBy = "writerUserProfile", fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
-    val albums: Set<Album>,
-    @OneToMany(mappedBy = "albumBookmarkId.userProfile", fetch = FetchType.LAZY)
-    val bookmarkAlbums: Set<AlbumBookmark>,
+    val albums: List<Album>,
+    @OneToMany(mappedBy = "userProfile", fetch = FetchType.LAZY)
+    val bookmarkAlbums: List<AlbumBookmark>,
     @OneToMany(cascade = [CascadeType.REMOVE], fetch = FetchType.LAZY, mappedBy = "writerUserProfile")
-    val posts: Set<Post>,
+    val posts: List<Post>,
     @ManyToMany(cascade = [CascadeType.REMOVE], fetch = FetchType.LAZY)
     @JoinTable(
         name = "post_bookmark",
         joinColumns = [JoinColumn(name = "post_id")],
         inverseJoinColumns = [JoinColumn(name = "user_id")]
     )
-    val bookmarkPost: Set<Post>
+    val bookmarkPost: List<Post>
 ) {
 
 }

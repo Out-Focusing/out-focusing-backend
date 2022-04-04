@@ -22,6 +22,8 @@ class Album(
     var content: String,
     @Column
     var secret: Boolean,
+    @Column
+    var thumbnail: String,
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,12 +38,12 @@ class Album(
     lateinit var createdAt: LocalDateTime
 
     @OneToMany(
-        mappedBy = "albumBookmarkId.album",
+        mappedBy = "album",
         fetch = FetchType.LAZY,
         orphanRemoval = true
     )
-    val bookmarkUsers: Set<AlbumBookmark> = setOf()
+    val bookmarkUsers: List<AlbumBookmark> = listOf()
 
     @OneToMany(mappedBy = "album", cascade = [CascadeType.REMOVE], fetch = FetchType.LAZY)
-    val posts: Set<Post> = setOf()
+    val posts: List<Post> = listOf()
 }

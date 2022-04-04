@@ -2,13 +2,12 @@ package com.out_focusing.out_focusing_backend.album.application
 
 import com.out_focusing.out_focusing_backend.album.domain.Album
 import com.out_focusing.out_focusing_backend.album.domain.AlbumBookmark
-import com.out_focusing.out_focusing_backend.album.dto.GenerateAlbumRequest
-import com.out_focusing.out_focusing_backend.album.dto.GenerateAlbumResponse
-import com.out_focusing.out_focusing_backend.album.dto.ModifyAlbumRequest
+import com.out_focusing.out_focusing_backend.album.dto.*
 import com.out_focusing.out_focusing_backend.album.repository.AlbumBookmarkRepository
 import com.out_focusing.out_focusing_backend.album.repository.AlbumRepository
 import com.out_focusing.out_focusing_backend.global.error.CustomException.*
 import com.out_focusing.out_focusing_backend.user.repository.UserProfileRepository
+import org.springframework.data.domain.Pageable
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.stereotype.Service
@@ -35,7 +34,8 @@ class AlbumApplication(
                 writerUserProfile = userProfile,
                 title = title,
                 content = content,
-                secret = isSecret
+                secret = isSecret,
+                thumbnail = thumbnail
             )
 
             albumRepository.save(generationAlbum)
@@ -89,11 +89,13 @@ class AlbumApplication(
             userProfileRepository.findById(userId).orElseThrow { UserNotExistsException }
         val album = albumRepository.findById(albumId).orElseThrow { AlbumNotFoundException }
 
-        val albumBookmarkId = AlbumBookmark.AlbumBookmarkId(userProfile, album)
+        val albumBookmark = AlbumBookmark(userProfile, album)
 
-        albumBookmarkRepository.findById(albumBookmarkId).ifPresent { AlreadyAlbumBookmarkedException }
+        if (albumBookmarkRepository.existsAlbumBookmarkByUserProfileAndAlbum(userProfile, album)) {
+            throw AlreadyAlbumBookmarkedException
+        }
 
-        albumBookmarkRepository.save(AlbumBookmark(albumBookmarkId))
+        albumBookmarkRepository.save(albumBookmark)
     }
 
     @Transactional
@@ -105,10 +107,53 @@ class AlbumApplication(
             userProfileRepository.findById(userId).orElseThrow { UserNotFoundException }
         val album = albumRepository.findById(albumId).orElseThrow { AlbumNotFoundException }
 
-        val albumBookmark = albumBookmarkRepository.findById(AlbumBookmark.AlbumBookmarkId(userProfile, album))
-            .orElseThrow { AlbumBookmarkNotFoundException }
+        if (!albumBookmarkRepository.existsAlbumBookmarkByUserProfileAndAlbum(userProfile, album))
+            throw AlbumBookmarkNotFoundException
 
-        albumBookmarkRepository.delete(albumBookmark)
+        albumBookmarkRepository.deleteAlbumBookmarkByUserProfileAndAlbum(userProfile, album)
+    }
+
+    fun getAlbumDetail(albumId: Long): AlbumDetailResponse {
+        val userDetails = SecurityContextHolder.getContext().authentication.principal as UserDetails
+        val userId = userDetails.username
+
+        val userProfile = userProfileRepository.findById(userId).orElseThrow { UserNotExistsException }
+
+        val album = albumRepository.getAlbumDetail(albumId, userProfile) ?: throw AlbumNotFoundException;
+
+        return AlbumDetailResponse.toAlbumDetailResponse(album, userProfile)
+    }
+
+
+    fun getMyAlbum(): List<AlbumSummaryResponse> {
+        val userDetails = SecurityContextHolder.getContext().authentication.principal as UserDetails
+        val userId = userDetails.username
+
+        val userProfile =
+            userProfileRepository.findById(userId).orElseThrow { UserNotExistsException }
+
+        return albumRepository.getMyAlbum(userProfile).map { album ->
+            AlbumSummaryResponse.toAlbumSummaryResponse(album, userProfile)
+        }
+    }
+
+    fun getUserAlbum(userId: String): List<AlbumSummaryResponse> {
+        val userDetails = SecurityContextHolder.getContext().authentication.principal as UserDetails
+
+        val writer = userProfileRepository.findById(userId).orElseThrow { UserNotFoundException }
+        val userProfile = userProfileRepository.findById(userDetails.username).orElseThrow { UserNotFoundException }
+
+        return albumRepository.getUserAlbum(writer)
+            .map { album -> AlbumSummaryResponse.toAlbumSummaryResponse(album, userProfile) }
+    }
+
+    fun getAlbum(pageable: Pageable): List<AlbumSummaryResponse> {
+        val userDetails = SecurityContextHolder.getContext().authentication.principal as UserDetails
+
+        val userProfile = userProfileRepository.findById(userDetails.username).orElseThrow { UserNotExistsException }
+
+        return albumRepository.getAlbum(pageable)
+            .map { album -> AlbumSummaryResponse.toAlbumSummaryResponse(album, userProfile) }
     }
 
 
