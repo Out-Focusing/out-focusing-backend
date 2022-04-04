@@ -15,6 +15,7 @@ class AlbumBookmark(
     val album: Album
 ) {
     @Id
+    @Column(name = "album_bookmark_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val albumBookmarkId: Long = 0
 }
