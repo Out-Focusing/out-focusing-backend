@@ -4,19 +4,18 @@ import com.out_focusing.out_focusing_backend.user.domain.UserProfile
 import javax.persistence.*
 
 @Entity
-@Table(name = "post_comment")
-class PostComment(
+@Table(name = "post_bookmark")
+class PostBookmark(
+    @JoinColumn(name = "user_id")
     @ManyToOne(fetch = FetchType.LAZY)
+    val userProfile: UserProfile,
+
     @JoinColumn(name = "post_id")
-    val post: Post,
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "writer_user_id")
-    val writerUserProfile: UserProfile,
-    @Column(length = 3000)
-    val content: String
+    val post: Post
 ) {
     @Id
+    @Column(name = "post_bookmark_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "comment_id")
-    val commentId: Long = 0
+    val postBookmarkId: Long = 0
 }
