@@ -5,15 +5,14 @@ import javax.persistence.*
 @Entity
 @Table(name = "post_hashtag")
 class PostHashtag(
-    @EmbeddedId
-    val postHashTagId: PostHashtagId
+    @JoinColumn(name = "post_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    val post: Post,
+    @Column(length = 20)
+    val hashtag: String,
 ) {
-    @Embeddable
-    data class PostHashtagId(
-        @JoinColumn(name = "post_id")
-        @ManyToOne(fetch = FetchType.LAZY)
-        val post: Post,
-        @Column(length = 20)
-        val hashtag: String
-    ): java.io.Serializable
+    @Id
+    @Column(name = "post_hashtag_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    val postHashTagId: Long = 0
 }

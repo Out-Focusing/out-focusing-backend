@@ -3,6 +3,7 @@ package com.out_focusing.out_focusing_backend.post.domain
 import com.out_focusing.out_focusing_backend.album.domain.Album
 import com.out_focusing.out_focusing_backend.user.domain.UserProfile
 import org.hibernate.annotations.CreationTimestamp
+import org.hibernate.annotations.Fetch
 import java.time.LocalDateTime
 import javax.persistence.*
 
@@ -24,20 +25,18 @@ class Post(
     val createdAt: LocalDateTime,
     @Column
     val secret: Boolean,
-    @ManyToMany(cascade = [CascadeType.REMOVE], fetch = FetchType.LAZY)
-    @JoinTable(
-        name = "post_bookmark",
-        joinColumns = [JoinColumn(name = "user_id")],
-        inverseJoinColumns = [JoinColumn(name = "post_id")]
-    )
-    val bookmarkUserS: Set<UserProfile>,
-    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
-    val comments: Set<PostComment>,
-    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
-    val contents: Set<PostContent>,
-    @OneToMany(mappedBy = "postHashTagId.post", fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
-    val hashtags: Set<PostHashtag>,
-    @OneToMany(mappedBy = "postViewsId.post", fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
-    val postViews: Set<PostViews>
+    @Column
+    val deleted: Boolean,
 ) {
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
+    val bookmarkUsers: List<PostBookmark> = listOf()
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
+    val comments: List<PostComment> = listOf()
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
+    val contents: List<PostContent> = listOf()
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
+    val hashtags: List<PostHashtag> = listOf()
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
+    val postViews: List<PostViews> = listOf()
+
 }
