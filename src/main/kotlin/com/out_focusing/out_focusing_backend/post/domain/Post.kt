@@ -18,9 +18,9 @@ class Post(
     val writerUserProfile: UserProfile,
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "album_id")
-    val album: Album,
+    var album: Album,
     @Column
-    val secret: Boolean,
+    var secret: Boolean,
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

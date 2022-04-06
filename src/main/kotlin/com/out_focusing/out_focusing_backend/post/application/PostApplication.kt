@@ -7,6 +7,7 @@ import com.out_focusing.out_focusing_backend.post.domain.PostContent
 import com.out_focusing.out_focusing_backend.post.domain.PostHashtag
 import com.out_focusing.out_focusing_backend.post.dto.GeneratePostResponse
 import com.out_focusing.out_focusing_backend.post.dto.GeneratePostRequest
+import com.out_focusing.out_focusing_backend.post.dto.ModifyPostRequest
 import com.out_focusing.out_focusing_backend.post.repository.PostContentRepository
 import com.out_focusing.out_focusing_backend.post.repository.PostHashtagRepository
 import com.out_focusing.out_focusing_backend.post.repository.PostRepository
@@ -50,5 +51,27 @@ class PostApplication(
         return GeneratePostResponse(generationPost.postId)
     }
 
+    @Transactional
+    fun modifyPost(postId: Long, requestBody: ModifyPostRequest) {
+        val userDetails = SecurityContextHolder.getContext().authentication.principal as UserDetails
+        val userId = userDetails.username
+
+        val userProfile = userProfileRepository.findById(userId).orElseThrow { UserNotFoundException }
+
+        val post = postRepository.findPostByPostId(postId, userProfile) ?: throw PostNotFoundException
+
+        if(post.writerUserProfile != userProfile) throw PostUpdateForbiddenException
+
+        val album = albumRepository.getAlbumDetail(requestBody.albumId, userProfile) ?: throw AlbumNotFoundException
+
+        postRepository.deleteAllPostHashtagByPost(post)
+        postHashtagRepository.saveAll(requestBody.hashtags.map { PostHashtag(post, it) })
+
+        postRepository.deleteAllPostContentsByPost(post)
+        postContentRepository.saveAll(requestBody.contents.map { PostContent(post, it) })
+
+        post.album = album
+        post.secret = requestBody.isSecret
+    }
 
 }
