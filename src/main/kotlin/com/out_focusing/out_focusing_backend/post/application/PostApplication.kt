@@ -58,7 +58,7 @@ class PostApplication(
 
         val userProfile = userProfileRepository.findById(userId).orElseThrow { UserNotFoundException }
 
-        val post = postRepository.findPostByPostId(postId, userProfile) ?: throw PostNotFoundException
+        val post = postRepository.findPostByPostId(postId, userProfile)
 
         if(post.writerUserProfile != userProfile) throw PostUpdateForbiddenException
 

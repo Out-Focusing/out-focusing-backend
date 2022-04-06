@@ -1,5 +1,6 @@
 package com.out_focusing.out_focusing_backend.post.repository
 
+import com.out_focusing.out_focusing_backend.global.error.CustomException.*
 import com.out_focusing.out_focusing_backend.post.domain.*
 import com.out_focusing.out_focusing_backend.user.domain.UserProfile
 import com.querydsl.jpa.impl.JPAQueryFactory
@@ -10,13 +11,15 @@ class PostCustomRepositoryImpl(
     private val jpaQueryFactory: JPAQueryFactory,
 ) : PostCustomRepository {
 
-    override fun findPostByPostId(postId: Long, userProfile: UserProfile?): Post? {
+    override fun findPostByPostId(postId: Long, userProfile: UserProfile?): Post {
 
         val permission = QPost.post.writerUserProfile.eq(userProfile).or(QPost.post.secret.isFalse)
 
         val post = jpaQueryFactory.selectFrom(QPost.post)
+            .leftJoin(QPost.post.writerUserProfile)
+            .fetchJoin()
             .where(QPost.post.postId.eq(postId).and(permission))
-            .fetchOne()
+            .fetchOne() ?: throw PostNotFoundException
 
         jpaQueryFactory.selectFrom(QPostContent.postContent)
             .leftJoin(QPostContent.postContent)
@@ -32,6 +35,8 @@ class PostCustomRepositoryImpl(
 
         jpaQueryFactory.selectFrom(QPostViews.postViews)
             .leftJoin(QPostViews.postViews.post)
+            .fetchJoin()
+            .leftJoin(QPostViews.postViews.readerUserProfile)
             .fetchJoin()
             .where(QPostViews.postViews.post.postId.eq(postId))
             .fetch()
