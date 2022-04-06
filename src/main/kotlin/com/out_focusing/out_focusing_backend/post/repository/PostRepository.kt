@@ -5,6 +5,6 @@ import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface PostRepository: CrudRepository<Post, Long> {
+interface PostRepository: CrudRepository<Post, Long>, PostCustomRepository {
 
 }
