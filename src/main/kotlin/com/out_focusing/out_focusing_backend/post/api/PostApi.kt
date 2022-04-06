@@ -31,5 +31,12 @@ class PostApi(
         return postApplication.modifyPost(postId, requestBody)
     }
 
+    @Operation(summary = "게시글 삭제")
+    @DeleteMapping("/{postId}")
+    @ResponseStatus(HttpStatus.OK)
+    fun removePost(@PathVariable postId: Long) {
+        return postApplication.removePost(postId)
+    }
+
 
 }

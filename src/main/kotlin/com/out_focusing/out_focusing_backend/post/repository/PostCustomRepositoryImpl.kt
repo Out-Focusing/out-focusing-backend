@@ -63,4 +63,38 @@ class PostCustomRepositoryImpl(
             .execute()
     }
 
+    override fun deletePost(post: Post) {
+        jpaQueryFactory.update(QPostContent.postContent)
+            .set(QPostContent.postContent.deleted, true)
+            .where(QPostContent.postContent.post.eq(post))
+            .execute()
+
+        jpaQueryFactory.update(QPostHashtag.postHashtag)
+            .set(QPostHashtag.postHashtag.deleted, true)
+            .where(QPostHashtag.postHashtag.post.eq(post))
+            .execute()
+
+        jpaQueryFactory.update(QPostViews.postViews)
+            .set(QPostViews.postViews.deleted, true)
+            .where(QPostViews.postViews.post.eq(post))
+            .execute()
+
+        jpaQueryFactory.update(QPostComment.postComment)
+            .set(QPostComment.postComment.deleted, true)
+            .where(QPostComment.postComment.post.eq(post))
+            .execute()
+
+        jpaQueryFactory.update(QPostBookmark.postBookmark)
+            .set(QPostBookmark.postBookmark.deleted, true)
+            .where(QPostBookmark.postBookmark.post.eq(post))
+            .execute()
+
+        jpaQueryFactory.update(QPost.post)
+            .set(QPost.post.deleted, true)
+            .where(QPost.post.eq(post))
+            .execute()
+
+    }
+
+
 }

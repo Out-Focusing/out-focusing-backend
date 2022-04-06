@@ -74,4 +74,18 @@ class PostApplication(
         post.secret = requestBody.isSecret
     }
 
+    @Transactional
+    fun removePost(postId: Long) {
+        val userDetails = SecurityContextHolder.getContext().authentication.principal as UserDetails
+        val userId = userDetails.username
+
+        val userProfile = userProfileRepository.findById(userId).orElseThrow { UserNotExistsException }
+
+        val post = postRepository.findPostByPostId(postId, userProfile)
+
+        if(post.writerUserProfile != userProfile) throw PostDeleteForbiddenException
+
+        postRepository.deletePost(post)
+    }
+
 }
