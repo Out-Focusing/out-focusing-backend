@@ -4,6 +4,7 @@ import com.out_focusing.out_focusing_backend.post.domain.Post
 import com.out_focusing.out_focusing_backend.user.domain.UserProfile
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.SQLDelete
+import org.hibernate.annotations.UpdateTimestamp
 import org.hibernate.annotations.Where
 import java.time.LocalDateTime
 import javax.persistence.*
@@ -36,6 +37,10 @@ class Album(
     @CreationTimestamp
     @Column(name = "created_at")
     lateinit var createdAt: LocalDateTime
+
+    @UpdateTimestamp
+    @Column(name = "modified_at")
+    lateinit var modifiedAt: LocalDateTime
 
     @OneToMany(
         mappedBy = "album",

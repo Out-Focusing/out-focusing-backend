@@ -4,6 +4,7 @@ import com.out_focusing.out_focusing_backend.album.domain.Album
 import com.out_focusing.out_focusing_backend.user.domain.UserProfile
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.SQLDelete
+import org.hibernate.annotations.UpdateTimestamp
 import org.hibernate.annotations.Where
 import java.time.LocalDateTime
 import javax.persistence.*
@@ -31,6 +32,9 @@ class Post(
     @CreationTimestamp
     @Column(name = "created_at")
     lateinit var createdAt: LocalDateTime
+    @UpdateTimestamp
+    @Column(name = "modified_at")
+    lateinit var modifiedAt: LocalDateTime
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
     val bookmarkUsers: List<PostBookmark> = listOf()
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
