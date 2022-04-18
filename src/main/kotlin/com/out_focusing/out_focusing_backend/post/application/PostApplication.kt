@@ -8,6 +8,8 @@ import com.out_focusing.out_focusing_backend.post.domain.PostHashtag
 import com.out_focusing.out_focusing_backend.post.dto.GeneratePostResponse
 import com.out_focusing.out_focusing_backend.post.dto.GeneratePostRequest
 import com.out_focusing.out_focusing_backend.post.dto.ModifyPostRequest
+import com.out_focusing.out_focusing_backend.post.dto.PostSummaryResponse
+import com.out_focusing.out_focusing_backend.post.repository.ESPostRepository
 import com.out_focusing.out_focusing_backend.post.repository.PostContentRepository
 import com.out_focusing.out_focusing_backend.post.repository.PostHashtagRepository
 import com.out_focusing.out_focusing_backend.post.repository.PostRepository
@@ -23,6 +25,7 @@ class PostApplication(
     private val postRepository: PostRepository,
     private val postHashtagRepository: PostHashtagRepository,
     private val postContentRepository: PostContentRepository,
+    private val esPostRepository: ESPostRepository,
     private val albumRepository: AlbumRepository,
     private val userProfileRepository: UserProfileRepository,
 ) {
@@ -60,7 +63,7 @@ class PostApplication(
 
         val post = postRepository.findPostByPostId(postId, userProfile)
 
-        if(post.writerUserProfile != userProfile) throw PostUpdateForbiddenException
+        if (post.writerUserProfile != userProfile) throw PostUpdateForbiddenException
 
         val album = albumRepository.getAlbumDetail(requestBody.albumId, userProfile) ?: throw AlbumNotFoundException
 
@@ -83,9 +86,23 @@ class PostApplication(
 
         val post = postRepository.findPostByPostId(postId, userProfile)
 
-        if(post.writerUserProfile != userProfile) throw PostDeleteForbiddenException
+        if (post.writerUserProfile != userProfile) throw PostDeleteForbiddenException
 
         postRepository.deletePost(post)
+    }
+
+    fun searchKeyword(keyword: String): List<PostSummaryResponse> {
+        val userDetails = SecurityContextHolder.getContext().authentication.principal as UserDetails
+        val userId = userDetails.username
+
+        val userProfile = userProfileRepository.findById(userId).orElseThrow { UserNotExistsException }
+
+        val resultPostIds = esPostRepository.findByKeyword(keyword).map { it.id }
+
+        return postRepository.findPostsByPostIds(resultPostIds, userProfile).map {
+            PostSummaryResponse.toPostSummaryResponse(it, userProfile)
+        }
+
     }
 
 }

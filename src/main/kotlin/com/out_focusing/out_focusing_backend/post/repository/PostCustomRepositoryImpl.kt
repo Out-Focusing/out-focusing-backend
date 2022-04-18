@@ -56,6 +56,52 @@ class PostCustomRepositoryImpl(
         return post
     }
 
+    override fun findPostsByPostIds(postIds: List<Long>, userProfile: UserProfile?): List<Post> {
+        val permission = QPost.post.writerUserProfile.eq(userProfile).or(QPost.post.secret.isFalse)
+
+        val posts = jpaQueryFactory.selectFrom(QPost.post)
+            .leftJoin(QPost.post.writerUserProfile)
+            .fetchJoin()
+            .leftJoin(QPost.post.album)
+            .fetchJoin()
+            .where(QPost.post.postId.`in`(postIds).and(permission))
+            .fetch()
+
+        jpaQueryFactory.selectFrom(QPostContent.postContent)
+            .leftJoin(QPostContent.postContent)
+            .fetchJoin()
+            .where(QPostContent.postContent.post.postId.`in`(postIds))
+            .fetch()
+
+        jpaQueryFactory.selectFrom(QPostHashtag.postHashtag)
+            .leftJoin(QPostHashtag.postHashtag)
+            .fetchJoin()
+            .where(QPostHashtag.postHashtag.post.postId.`in`(postIds))
+            .fetch()
+
+        jpaQueryFactory.selectFrom(QPostViews.postViews)
+            .leftJoin(QPostViews.postViews.post)
+            .fetchJoin()
+            .leftJoin(QPostViews.postViews.readerUserProfile)
+            .fetchJoin()
+            .where(QPostViews.postViews.post.postId.`in`(postIds))
+            .fetch()
+
+        jpaQueryFactory.selectFrom(QPostComment.postComment)
+            .leftJoin(QPostComment.postComment)
+            .fetchJoin()
+            .where(QPostComment.postComment.post.postId.`in`(postIds))
+            .fetch()
+
+        jpaQueryFactory.selectFrom(QPostBookmark.postBookmark)
+            .leftJoin(QPostBookmark.postBookmark.post)
+            .fetchJoin()
+            .where(QPostBookmark.postBookmark.post.postId.`in`(postIds))
+            .fetch()
+
+        return posts
+    }
+
     override fun deleteAllPostHashtagByPost(post: Post) {
         jpaQueryFactory.delete(QPostHashtag.postHashtag)
             .where(QPostHashtag.postHashtag.post.eq(post))

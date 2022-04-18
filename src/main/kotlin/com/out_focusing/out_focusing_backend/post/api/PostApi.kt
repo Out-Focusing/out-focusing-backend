@@ -4,6 +4,7 @@ import com.out_focusing.out_focusing_backend.post.application.PostApplication
 import com.out_focusing.out_focusing_backend.post.dto.GeneratePostRequest
 import com.out_focusing.out_focusing_backend.post.dto.GeneratePostResponse
 import com.out_focusing.out_focusing_backend.post.dto.ModifyPostRequest
+import com.out_focusing.out_focusing_backend.post.dto.PostSummaryResponse
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.HttpStatus
@@ -36,6 +37,13 @@ class PostApi(
     @ResponseStatus(HttpStatus.OK)
     fun removePost(@PathVariable postId: Long) {
         return postApplication.removePost(postId)
+    }
+
+    @Operation(summary = "게시글 조회")
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    fun searchPost(@RequestParam(name = "keyword") keyword: String): List<PostSummaryResponse> {
+        return postApplication.searchKeyword(keyword)
     }
 
 
