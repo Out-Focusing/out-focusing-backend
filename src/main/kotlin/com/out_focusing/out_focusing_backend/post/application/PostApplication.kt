@@ -106,4 +106,17 @@ class PostApplication(
 
     }
 
+    fun getPostsByAlbum(albumId: Long, pageable: Pageable): List<PostSummaryResponse> {
+        val userDetails = SecurityContextHolder.getContext().authentication.principal as UserDetails
+        val username = userDetails.username
+
+        val userProfile = userProfileRepository.findById(username).orElseThrow { UserNotExistsException }
+
+        val album = albumRepository.getAlbumDetail(albumId, userProfile) ?: throw AlbumNotFoundException
+
+        return postRepository.findPostsByAlbum(album, pageable, userProfile).map {
+            PostSummaryResponse.toPostSummaryResponse(it, userProfile)
+        }
+    }
+
 }

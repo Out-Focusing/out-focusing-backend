@@ -1,9 +1,11 @@
 package com.out_focusing.out_focusing_backend.post.repository
 
+import com.out_focusing.out_focusing_backend.album.domain.Album
 import com.out_focusing.out_focusing_backend.global.error.CustomException.*
 import com.out_focusing.out_focusing_backend.post.domain.*
 import com.out_focusing.out_focusing_backend.user.domain.UserProfile
 import com.querydsl.jpa.impl.JPAQueryFactory
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Repository
 
 @Repository
@@ -21,35 +23,7 @@ class PostCustomRepositoryImpl(
             .where(QPost.post.postId.eq(postId).and(permission))
             .fetchOne() ?: throw PostNotFoundException
 
-        jpaQueryFactory.selectFrom(QPost.post)
-            .leftJoin(QPost.post.postViews)
-            .fetchJoin()
-            .where(QPost.post.postId.eq(postId).and(permission))
-            .fetch()
-
-        jpaQueryFactory.selectFrom(QPost.post)
-            .leftJoin(QPost.post.comments)
-            .fetchJoin()
-            .where(QPost.post.postId.eq(postId).and(permission))
-            .fetch()
-
-        jpaQueryFactory.selectFrom(QPost.post)
-            .leftJoin(QPost.post.contents)
-            .fetchJoin()
-            .where(QPost.post.postId.eq(postId).and(permission))
-            .fetch()
-
-        jpaQueryFactory.selectFrom(QPost.post)
-            .leftJoin(QPost.post.bookmarkUsers)
-            .fetchJoin()
-            .where(QPost.post.postId.eq(postId).and(permission))
-            .fetch()
-
-        jpaQueryFactory.selectFrom(QPost.post)
-            .leftJoin(QPost.post.hashtags)
-            .fetchJoin()
-            .where(QPost.post.postId.eq(postId).and(permission))
-            .fetch()
+        fetchJoinPosts(listOf(post))
 
         return post
     }
@@ -58,38 +32,66 @@ class PostCustomRepositoryImpl(
         val permission = QPost.post.writerUserProfile.eq(userProfile).or(QPost.post.secret.isFalse)
 
         val result = jpaQueryFactory.selectFrom(QPost.post)
-            .leftJoin(QPost.post.postViews)
+            .leftJoin(QPost.post.album)
+            .fetchJoin()
+            .leftJoin(QPost.post.writerUserProfile)
             .fetchJoin()
             .where(QPost.post.postId.`in`(postIds).and(permission))
+            .fetch()
+
+        fetchJoinPosts(result)
+
+        return result;
+    }
+
+    override fun findPostsByAlbum(album: Album, pageable: Pageable, userProfile: UserProfile?): List<Post> {
+        val permission = QPost.post.writerUserProfile.eq(userProfile).or(QPost.post.secret.isFalse)
+
+        val result = jpaQueryFactory.selectFrom(QPost.post)
+            .leftJoin(QPost.post.album)
+            .fetchJoin()
+            .leftJoin(QPost.post.writerUserProfile)
+            .fetchJoin()
+            .where(QPost.post.album.eq(album).and(permission))
+            .offset(pageable.offset)
+            .limit(pageable.pageSize.toLong())
+            .fetch()
+
+        fetchJoinPosts(result)
+
+        return result
+    }
+
+    override fun fetchJoinPosts(posts: List<Post>) {
+        jpaQueryFactory.selectFrom(QPost.post)
+            .leftJoin(QPost.post.postViews)
+            .fetchJoin()
+            .where(QPost.post.`in`(posts))
             .fetch()
 
         jpaQueryFactory.selectFrom(QPost.post)
             .leftJoin(QPost.post.comments)
             .fetchJoin()
-            .where(QPost.post.postId.`in`(postIds).and(permission))
+            .where(QPost.post.`in`(posts))
             .fetch()
 
         jpaQueryFactory.selectFrom(QPost.post)
             .leftJoin(QPost.post.contents)
             .fetchJoin()
-            .where(QPost.post.postId.`in`(postIds).and(permission))
+            .where(QPost.post.`in`(posts))
             .fetch()
 
         jpaQueryFactory.selectFrom(QPost.post)
             .leftJoin(QPost.post.bookmarkUsers)
             .fetchJoin()
-            .where(QPost.post.postId.`in`(postIds).and(permission))
+            .where(QPost.post.`in`(posts))
             .fetch()
 
         jpaQueryFactory.selectFrom(QPost.post)
             .leftJoin(QPost.post.hashtags)
             .fetchJoin()
-            .where(QPost.post.postId.`in`(postIds).and(permission))
+            .where(QPost.post.`in`(posts))
             .fetch()
-
-        return result;
-
-
     }
 
     override fun deleteAllPostHashtagByPost(post: Post) {

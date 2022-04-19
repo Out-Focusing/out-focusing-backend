@@ -47,5 +47,10 @@ class PostApi(
         return postApplication.searchKeyword(keyword, pageable)
     }
 
-
+    @Operation(summary = "앨범의 게시글 조회")
+    @GetMapping("/albums/{albumId}")
+    @ResponseStatus(HttpStatus.OK)
+    fun getPostsByAlbum(@PathVariable albumId: Long, pageable: Pageable): List<PostSummaryResponse> {
+        return postApplication.getPostsByAlbum(albumId, pageable)
+     }
 }
