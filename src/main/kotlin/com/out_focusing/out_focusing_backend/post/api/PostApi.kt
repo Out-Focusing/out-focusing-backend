@@ -7,6 +7,7 @@ import com.out_focusing.out_focusing_backend.post.dto.ModifyPostRequest
 import com.out_focusing.out_focusing_backend.post.dto.PostSummaryResponse
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
+import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
@@ -42,8 +43,8 @@ class PostApi(
     @Operation(summary = "게시글 조회")
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    fun searchPost(@RequestParam(name = "keyword") keyword: String): List<PostSummaryResponse> {
-        return postApplication.searchKeyword(keyword)
+    fun searchPost(@RequestParam(name = "keyword") keyword: String, pageable: Pageable): List<PostSummaryResponse> {
+        return postApplication.searchKeyword(keyword, pageable)
     }
 
 

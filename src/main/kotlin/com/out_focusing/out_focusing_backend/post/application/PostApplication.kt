@@ -14,6 +14,7 @@ import com.out_focusing.out_focusing_backend.post.repository.PostContentReposito
 import com.out_focusing.out_focusing_backend.post.repository.PostHashtagRepository
 import com.out_focusing.out_focusing_backend.post.repository.PostRepository
 import com.out_focusing.out_focusing_backend.user.repository.UserProfileRepository
+import org.springframework.data.domain.Pageable
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.stereotype.Service
@@ -91,13 +92,13 @@ class PostApplication(
         postRepository.deletePost(post)
     }
 
-    fun searchKeyword(keyword: String): List<PostSummaryResponse> {
+    fun searchKeyword(keyword: String, pageable: Pageable): List<PostSummaryResponse> {
         val userDetails = SecurityContextHolder.getContext().authentication.principal as UserDetails
         val userId = userDetails.username
 
         val userProfile = userProfileRepository.findById(userId).orElseThrow { UserNotExistsException }
 
-        val resultPostIds = esPostRepository.findByKeyword(keyword).map { it.id }
+        val resultPostIds = esPostRepository.findByKeyword(keyword, pageable).map { it.id }.toList()
 
         return postRepository.findPostsByPostIds(resultPostIds, userProfile).map {
             PostSummaryResponse.toPostSummaryResponse(it, userProfile)
