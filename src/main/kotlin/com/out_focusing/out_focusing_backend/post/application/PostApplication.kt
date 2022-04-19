@@ -119,4 +119,17 @@ class PostApplication(
         }
     }
 
+    fun getPostsByUser(userId: String, pageable: Pageable): List<PostSummaryResponse> {
+        val userDetails = SecurityContextHolder.getContext().authentication.principal as UserDetails
+        val username = userDetails.username
+
+        val myUserProfile = userProfileRepository.findById(username).orElseThrow { UserNotExistsException }
+
+        val targetUserProfile = userProfileRepository.findById(userId).orElseThrow { UserNotFoundException }
+
+        return postRepository.findPostsByUserProfile(targetUserProfile, pageable, myUserProfile).map {
+            PostSummaryResponse.toPostSummaryResponse(it, myUserProfile)
+        }
+    }
+
 }

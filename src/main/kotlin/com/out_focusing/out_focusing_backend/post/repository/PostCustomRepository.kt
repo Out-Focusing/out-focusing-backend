@@ -10,6 +10,7 @@ interface PostCustomRepository {
     fun findPostByPostId(postId: Long, userProfile: UserProfile?): Post
     fun findPostsByPostIds(postIds: List<Long>, userProfile: UserProfile?): List<Post>
     fun findPostsByAlbum(album: Album, pageable: Pageable, userProfile: UserProfile?): List<Post>
+    fun findPostsByUserProfile(targetUserProfile: UserProfile, pageable: Pageable, myUserProfile: UserProfile?): List<Post>
     fun fetchJoinPosts(posts: List<Post>)
     fun deleteAllPostHashtagByPost(post: Post)
     fun deleteAllPostContentsByPost(post: Post)

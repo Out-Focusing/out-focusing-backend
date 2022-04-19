@@ -53,4 +53,11 @@ class PostApi(
     fun getPostsByAlbum(@PathVariable albumId: Long, pageable: Pageable): List<PostSummaryResponse> {
         return postApplication.getPostsByAlbum(albumId, pageable)
      }
+
+    @Operation(summary = "유저가 작성한 게시글 조회")
+    @GetMapping("/users/{userId}")
+    @ResponseStatus(HttpStatus.OK)
+    fun getPostsByUserProfile(@PathVariable userId: String, pageable: Pageable): List<PostSummaryResponse> {
+        return postApplication.getPostsByUser(userId, pageable)
+    }
 }

@@ -62,6 +62,24 @@ class PostCustomRepositoryImpl(
         return result
     }
 
+    override fun findPostsByUserProfile(targetUserProfile: UserProfile, pageable: Pageable, myUserProfile: UserProfile?): List<Post> {
+        val permission = QPost.post.writerUserProfile.eq(myUserProfile).or(QPost.post.secret.isFalse)
+
+        val result = jpaQueryFactory.selectFrom(QPost.post)
+            .leftJoin(QPost.post.album)
+            .fetchJoin()
+            .leftJoin(QPost.post.writerUserProfile)
+            .fetchJoin()
+            .where(QPost.post.writerUserProfile.eq(targetUserProfile).and(permission))
+            .offset(pageable.offset)
+            .limit(pageable.pageSize.toLong())
+            .fetch()
+
+        fetchJoinPosts(result)
+
+        return result
+    }
+
     override fun fetchJoinPosts(posts: List<Post>) {
         jpaQueryFactory.selectFrom(QPost.post)
             .leftJoin(QPost.post.postViews)
