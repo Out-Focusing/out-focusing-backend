@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
 
 @RestController
-@RequestMapping("/v1/post")
+@RequestMapping("/v1/posts")
 @Tag(name = "Post API")
 class PostApi(
     private val postApplication: PostApplication
