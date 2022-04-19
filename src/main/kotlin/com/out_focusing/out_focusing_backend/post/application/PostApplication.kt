@@ -100,12 +100,11 @@ class PostApplication(
 
         val postBookmark = PostBookmark(userProfile, post)
 
-        try {
-            postBookmarkRepository.save(postBookmark)
-        } catch (exception: DataIntegrityViolationException) {
-            throw AlreadyPostBookmarkedException
+        if(postBookmarkRepository.existsPostBookmarkByUserProfileAndPost(userProfile, post)) {
+            throw AlreadyAlbumBookmarkedException
         }
 
+        postBookmarkRepository.save(postBookmark)
     }
 
     @Transactional
@@ -120,9 +119,7 @@ class PostApplication(
             throw PostBookmarkNotFoundException
         }
 
-        val postBookmarkId = postBookmarkRepository.findTopByUserProfileAndPost(userProfile, post).postBookmarkId
-
-        postBookmarkRepository.deleteById(postBookmarkId)
+        postBookmarkRepository.deletePostBookmarkByUserProfileAndPost(userProfile, post)
     }
 
 

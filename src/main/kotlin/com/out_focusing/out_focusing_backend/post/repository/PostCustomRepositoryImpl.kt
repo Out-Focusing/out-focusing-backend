@@ -170,8 +170,7 @@ class PostCustomRepositoryImpl(
             .where(QPostComment.postComment.post.eq(post))
             .execute()
 
-        jpaQueryFactory.update(QPostBookmark.postBookmark)
-            .set(QPostBookmark.postBookmark.deleted, true)
+        jpaQueryFactory.delete(QPostBookmark.postBookmark)
             .where(QPostBookmark.postBookmark.post.eq(post))
             .execute()
 
