@@ -28,8 +28,10 @@ open class CustomException(val code: HttpStatus, override val message: String) :
     object AlbumNotFoundException : NotFoundException("존재하지 않은 앨범입니다.")
     object AlbumBookmarkNotFoundException: NotFoundException("북마크에 추가되지 않은 앨범입니다.")
     object PostNotFoundException : NotFoundException("존재하지 않는 게시글입니다.")
+    object PostBookmarkNotFoundException: NotFoundException("북마크에 추가되지 않은 게시글입니다.")
 
     object UserIdConflictException : ConflictException("중복된 유저 아이디입니다.")
     object AlreadyAlbumBookmarkedException: ConflictException("이미 북마크에 추가한 앨범입니다.")
+    object AlreadyPostBookmarkedException: ConflictException("이미 북마크에 추가한 게시글입니다.")
 
 }
