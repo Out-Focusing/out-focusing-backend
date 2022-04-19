@@ -6,10 +6,7 @@ import com.out_focusing.out_focusing_backend.post.domain.Post
 import com.out_focusing.out_focusing_backend.post.domain.PostBookmark
 import com.out_focusing.out_focusing_backend.post.domain.PostContent
 import com.out_focusing.out_focusing_backend.post.domain.PostHashtag
-import com.out_focusing.out_focusing_backend.post.dto.GeneratePostResponse
-import com.out_focusing.out_focusing_backend.post.dto.GeneratePostRequest
-import com.out_focusing.out_focusing_backend.post.dto.ModifyPostRequest
-import com.out_focusing.out_focusing_backend.post.dto.PostSummaryResponse
+import com.out_focusing.out_focusing_backend.post.dto.*
 import com.out_focusing.out_focusing_backend.post.repository.*
 import com.out_focusing.out_focusing_backend.user.repository.UserProfileRepository
 import org.springframework.dao.DataIntegrityViolationException
@@ -141,6 +138,17 @@ class PostApplication(
             PostSummaryResponse.toPostSummaryResponse(it, userProfile)
         }
 
+    }
+
+    fun getPostById(postId: Long): PostDetailResponse {
+        val userDetails = SecurityContextHolder.getContext().authentication.principal as UserDetails
+        val username = userDetails.username
+
+        val userProfile = userProfileRepository.findById(username).orElseThrow { UserNotExistsException }
+
+        val post = postRepository.findPostByPostId(postId, userProfile)
+
+        return PostDetailResponse.toPostDetailResponse(post, userProfile)
     }
 
     fun getPostsByAlbum(albumId: Long, pageable: Pageable): List<PostSummaryResponse> {

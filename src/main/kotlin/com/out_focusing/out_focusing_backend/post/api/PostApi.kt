@@ -1,10 +1,7 @@
 package com.out_focusing.out_focusing_backend.post.api
 
 import com.out_focusing.out_focusing_backend.post.application.PostApplication
-import com.out_focusing.out_focusing_backend.post.dto.GeneratePostRequest
-import com.out_focusing.out_focusing_backend.post.dto.GeneratePostResponse
-import com.out_focusing.out_focusing_backend.post.dto.ModifyPostRequest
-import com.out_focusing.out_focusing_backend.post.dto.PostSummaryResponse
+import com.out_focusing.out_focusing_backend.post.dto.*
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.data.domain.Pageable
@@ -45,6 +42,13 @@ class PostApi(
     @ResponseStatus(HttpStatus.OK)
     fun searchPost(@RequestParam(name = "keyword") keyword: String, pageable: Pageable): List<PostSummaryResponse> {
         return postApplication.searchPostsByKeyword(keyword, pageable)
+    }
+
+    @Operation(summary = "게시글 단일 조회")
+    @GetMapping("/{postId}")
+    @ResponseStatus(HttpStatus.OK)
+    fun getPostById(@PathVariable postId: Long): PostDetailResponse {
+        return postApplication.getPostById(postId)
     }
 
     @Operation(summary = "앨범의 게시글 조회")
