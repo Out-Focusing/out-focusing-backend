@@ -60,4 +60,11 @@ class PostApi(
     fun getPostsByUserProfile(@PathVariable userId: String, pageable: Pageable): List<PostSummaryResponse> {
         return postApplication.getPostsByUser(userId, pageable)
     }
+
+    @Operation(summary = "자신이 작성한 게시글 조회")
+    @GetMapping("/my")
+    @ResponseStatus(HttpStatus.OK)
+    fun getMyPosts(pageable: Pageable): List<PostSummaryResponse> {
+        return postApplication.getMyPosts(pageable)
+    }
 }
