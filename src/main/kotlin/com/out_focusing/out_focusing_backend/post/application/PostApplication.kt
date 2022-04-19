@@ -3,16 +3,14 @@ package com.out_focusing.out_focusing_backend.post.application
 import com.out_focusing.out_focusing_backend.album.repository.AlbumRepository
 import com.out_focusing.out_focusing_backend.global.error.CustomException.*
 import com.out_focusing.out_focusing_backend.post.domain.Post
+import com.out_focusing.out_focusing_backend.post.domain.PostBookmark
 import com.out_focusing.out_focusing_backend.post.domain.PostContent
 import com.out_focusing.out_focusing_backend.post.domain.PostHashtag
 import com.out_focusing.out_focusing_backend.post.dto.GeneratePostResponse
 import com.out_focusing.out_focusing_backend.post.dto.GeneratePostRequest
 import com.out_focusing.out_focusing_backend.post.dto.ModifyPostRequest
 import com.out_focusing.out_focusing_backend.post.dto.PostSummaryResponse
-import com.out_focusing.out_focusing_backend.post.repository.ESPostRepository
-import com.out_focusing.out_focusing_backend.post.repository.PostContentRepository
-import com.out_focusing.out_focusing_backend.post.repository.PostHashtagRepository
-import com.out_focusing.out_focusing_backend.post.repository.PostRepository
+import com.out_focusing.out_focusing_backend.post.repository.*
 import com.out_focusing.out_focusing_backend.user.repository.UserProfileRepository
 import org.springframework.data.domain.Pageable
 import org.springframework.security.core.context.SecurityContextHolder
@@ -26,6 +24,7 @@ class PostApplication(
     private val postRepository: PostRepository,
     private val postHashtagRepository: PostHashtagRepository,
     private val postContentRepository: PostContentRepository,
+    private val postBookmarkRepository: PostBookmarkRepository,
     private val esPostRepository: ESPostRepository,
     private val albumRepository: AlbumRepository,
     private val userProfileRepository: UserProfileRepository,
@@ -91,6 +90,41 @@ class PostApplication(
 
         postRepository.deletePost(post)
     }
+
+    @Transactional
+    fun addPostBookmark(postId: Long) {
+        val userDetails = SecurityContextHolder.getContext().authentication.principal as UserDetails
+        val userId = userDetails.username
+
+        val userProfile = userProfileRepository.findById(userId).orElseThrow { UserNotExistsException }
+        val post = postRepository.findPostByPostId(postId, userProfile)
+
+        val postBookmark = PostBookmark(userProfile, post)
+
+        if(postBookmarkRepository.existsPostBookmarkByUserProfileAndPost(userProfile, post)) {
+            throw AlreadyPostBookmarkedException
+        }
+
+        postBookmarkRepository.save(postBookmark)
+    }
+
+    @Transactional
+    fun cancelPostBookmark(postId: Long) {
+        val userDetails = SecurityContextHolder.getContext().authentication.principal as UserDetails
+        val userId = userDetails.username
+
+        val userProfile = userProfileRepository.findById(userId).orElseThrow { UserNotExistsException }
+        val post = postRepository.findPostByPostId(postId, userProfile)
+
+        if(!postBookmarkRepository.existsPostBookmarkByUserProfileAndPost(userProfile, post)) {
+            throw PostBookmarkNotFoundException
+        }
+
+        val postBookmarkId = postBookmarkRepository.findTopByUserProfileAndPost(userProfile, post).postBookmarkId
+
+        postBookmarkRepository.deleteById(postBookmarkId)
+    }
+
 
     fun searchPostsByKeyword(keyword: String, pageable: Pageable): List<PostSummaryResponse> {
         val userDetails = SecurityContextHolder.getContext().authentication.principal as UserDetails
