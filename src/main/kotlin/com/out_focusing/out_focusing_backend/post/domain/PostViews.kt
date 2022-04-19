@@ -1,6 +1,8 @@
 package com.out_focusing.out_focusing_backend.post.domain
 
 import com.out_focusing.out_focusing_backend.user.domain.UserProfile
+import org.hibernate.annotations.SQLDelete
+import org.hibernate.annotations.Where
 import org.springframework.data.annotation.CreatedDate
 import java.util.Date
 import javax.persistence.Column
@@ -16,6 +18,8 @@ import javax.persistence.UniqueConstraint
 
 @Entity
 @Table(name = "post_views", uniqueConstraints = [UniqueConstraint(columnNames = ["post_id", "reader_user_id", "read_date"])])
+@SQLDelete(sql = "UPDATE post_views SET deleted = TRUE WHERE post_views_id = ?")
+@Where(clause = "deleted=false")
 class PostViews(
     @JoinColumn(name = "post_id")
     @ManyToOne(fetch = FetchType.LAZY)
@@ -33,4 +37,7 @@ class PostViews(
     @Column(name = "post_views_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val postViewsId: Long = 0
+
+    @Column
+    val deleted: Boolean = false
 }
