@@ -12,11 +12,13 @@ import com.out_focusing.out_focusing_backend.post.dto.ModifyPostRequest
 import com.out_focusing.out_focusing_backend.post.dto.PostSummaryResponse
 import com.out_focusing.out_focusing_backend.post.repository.*
 import com.out_focusing.out_focusing_backend.user.repository.UserProfileRepository
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.data.domain.Pageable
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.sql.SQLIntegrityConstraintViolationException
 
 @Service
 @Transactional(readOnly = true)
@@ -101,11 +103,12 @@ class PostApplication(
 
         val postBookmark = PostBookmark(userProfile, post)
 
-        if(postBookmarkRepository.existsPostBookmarkByUserProfileAndPost(userProfile, post)) {
+        try {
+            postBookmarkRepository.save(postBookmark)
+        } catch (exception: DataIntegrityViolationException) {
             throw AlreadyPostBookmarkedException
         }
 
-        postBookmarkRepository.save(postBookmark)
     }
 
     @Transactional
@@ -116,7 +119,7 @@ class PostApplication(
         val userProfile = userProfileRepository.findById(userId).orElseThrow { UserNotExistsException }
         val post = postRepository.findPostByPostId(postId, userProfile)
 
-        if(!postBookmarkRepository.existsPostBookmarkByUserProfileAndPost(userProfile, post)) {
+        if (!postBookmarkRepository.existsPostBookmarkByUserProfileAndPost(userProfile, post)) {
             throw PostBookmarkNotFoundException
         }
 
