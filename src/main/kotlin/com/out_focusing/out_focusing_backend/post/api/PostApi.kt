@@ -67,6 +67,13 @@ class PostApi(
     fun getMyPosts(pageable: Pageable): List<PostSummaryResponse> {
         return postApplication.getMyPosts(pageable)
     }
+
+    @Operation(summary = "자신이 북마크한 게시글 조회")
+    @GetMapping("/my/bookmark")
+    @ResponseStatus(HttpStatus.OK)
+    fun getMyBookmarkPosts(pageable: Pageable): List<PostSummaryResponse> {
+        return postApplication.getMyBookmarkPosts(pageable)
+    }
     @Operation(summary = "게시글 북마크")
     @PostMapping("/{postId}/bookmark")
     @ResponseStatus(HttpStatus.CREATED)

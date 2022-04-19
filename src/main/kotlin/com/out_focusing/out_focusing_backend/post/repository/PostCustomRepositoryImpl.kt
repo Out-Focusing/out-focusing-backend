@@ -62,7 +62,11 @@ class PostCustomRepositoryImpl(
         return result
     }
 
-    override fun findPostsByUserProfile(targetUserProfile: UserProfile, pageable: Pageable, myUserProfile: UserProfile?): List<Post> {
+    override fun findPostsByUserProfile(
+        targetUserProfile: UserProfile,
+        pageable: Pageable,
+        myUserProfile: UserProfile?,
+    ): List<Post> {
         val permission = QPost.post.writerUserProfile.eq(myUserProfile).or(QPost.post.secret.isFalse)
 
         val result = jpaQueryFactory.selectFrom(QPost.post)
@@ -78,6 +82,27 @@ class PostCustomRepositoryImpl(
         fetchJoinPosts(result)
 
         return result
+    }
+
+    override fun findPostsByUserBookmark(
+        targetUserProfile: UserProfile,
+        pageable: Pageable,
+        myUserProfile: UserProfile?,
+    ): List<Post> {
+        val permission = QPostBookmark.postBookmark.post.writerUserProfile.eq(myUserProfile)
+            .or(QPostBookmark.postBookmark.post.secret.isFalse)
+
+        val subQuery = jpaQueryFactory.select(QPostBookmark.postBookmark.post)
+            .from(QPostBookmark.postBookmark)
+            .leftJoin(QPostBookmark.postBookmark.userProfile)
+            .where(QPostBookmark.postBookmark.userProfile.eq(targetUserProfile).and(permission))
+            .offset(pageable.offset)
+            .limit(pageable.pageSize.toLong())
+            .fetch()
+
+        fetchJoinPosts(subQuery)
+
+        return subQuery
     }
 
     override fun fetchJoinPosts(posts: List<Post>) {

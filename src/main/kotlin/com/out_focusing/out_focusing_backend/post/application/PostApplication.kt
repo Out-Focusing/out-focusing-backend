@@ -176,4 +176,15 @@ class PostApplication(
             PostSummaryResponse.toPostSummaryResponse(it, userProfile)
         }
     }
+
+    fun getMyBookmarkPosts(pageable: Pageable): List<PostSummaryResponse> {
+        val userDetails = SecurityContextHolder.getContext().authentication.principal as UserDetails
+        val username = userDetails.username
+
+        val userProfile = userProfileRepository.findById(username).orElseThrow { UserNotExistsException }
+
+        return postRepository.findPostsByUserBookmark(userProfile, pageable, userProfile).map {
+            PostSummaryResponse.toPostSummaryResponse(it, userProfile)
+        }
+    }
 }
