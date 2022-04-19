@@ -92,7 +92,7 @@ class PostApplication(
         postRepository.deletePost(post)
     }
 
-    fun searchKeyword(keyword: String, pageable: Pageable): List<PostSummaryResponse> {
+    fun searchPostsByKeyword(keyword: String, pageable: Pageable): List<PostSummaryResponse> {
         val userDetails = SecurityContextHolder.getContext().authentication.principal as UserDetails
         val userId = userDetails.username
 

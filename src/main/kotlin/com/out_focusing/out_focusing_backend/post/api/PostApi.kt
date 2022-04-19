@@ -44,7 +44,7 @@ class PostApi(
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     fun searchPost(@RequestParam(name = "keyword") keyword: String, pageable: Pageable): List<PostSummaryResponse> {
-        return postApplication.searchKeyword(keyword, pageable)
+        return postApplication.searchPostsByKeyword(keyword, pageable)
     }
 
     @Operation(summary = "앨범의 게시글 조회")
