@@ -21,36 +21,34 @@ class PostCustomRepositoryImpl(
             .where(QPost.post.postId.eq(postId).and(permission))
             .fetchOne() ?: throw PostNotFoundException
 
-        jpaQueryFactory.selectFrom(QPostContent.postContent)
-            .leftJoin(QPostContent.postContent)
+        jpaQueryFactory.selectFrom(QPost.post)
+            .leftJoin(QPost.post.postViews)
             .fetchJoin()
-            .where(QPostContent.postContent.post.postId.eq(postId))
+            .where(QPost.post.postId.eq(postId).and(permission))
             .fetch()
 
-        jpaQueryFactory.selectFrom(QPostHashtag.postHashtag)
-            .leftJoin(QPostHashtag.postHashtag)
+        jpaQueryFactory.selectFrom(QPost.post)
+            .leftJoin(QPost.post.comments)
             .fetchJoin()
-            .where(QPostHashtag.postHashtag.post.postId.eq(postId))
+            .where(QPost.post.postId.eq(postId).and(permission))
             .fetch()
 
-        jpaQueryFactory.selectFrom(QPostViews.postViews)
-            .leftJoin(QPostViews.postViews.post)
+        jpaQueryFactory.selectFrom(QPost.post)
+            .leftJoin(QPost.post.contents)
             .fetchJoin()
-            .leftJoin(QPostViews.postViews.readerUserProfile)
-            .fetchJoin()
-            .where(QPostViews.postViews.post.postId.eq(postId))
+            .where(QPost.post.postId.eq(postId).and(permission))
             .fetch()
 
-        jpaQueryFactory.selectFrom(QPostComment.postComment)
-            .leftJoin(QPostComment.postComment)
+        jpaQueryFactory.selectFrom(QPost.post)
+            .leftJoin(QPost.post.bookmarkUsers)
             .fetchJoin()
-            .where(QPostComment.postComment.post.postId.eq(postId))
+            .where(QPost.post.postId.eq(postId).and(permission))
             .fetch()
 
-        jpaQueryFactory.selectFrom(QPostBookmark.postBookmark)
-            .leftJoin(QPostBookmark.postBookmark.post)
+        jpaQueryFactory.selectFrom(QPost.post)
+            .leftJoin(QPost.post.hashtags)
             .fetchJoin()
-            .where(QPostBookmark.postBookmark.post.postId.eq(postId))
+            .where(QPost.post.postId.eq(postId).and(permission))
             .fetch()
 
         return post
@@ -59,47 +57,39 @@ class PostCustomRepositoryImpl(
     override fun findPostsByPostIds(postIds: List<Long>, userProfile: UserProfile?): List<Post> {
         val permission = QPost.post.writerUserProfile.eq(userProfile).or(QPost.post.secret.isFalse)
 
-        val posts = jpaQueryFactory.selectFrom(QPost.post)
-            .leftJoin(QPost.post.writerUserProfile)
-            .fetchJoin()
-            .leftJoin(QPost.post.album)
+        val result = jpaQueryFactory.selectFrom(QPost.post)
+            .leftJoin(QPost.post.postViews)
             .fetchJoin()
             .where(QPost.post.postId.`in`(postIds).and(permission))
             .fetch()
 
-        jpaQueryFactory.selectFrom(QPostContent.postContent)
-            .leftJoin(QPostContent.postContent)
+        jpaQueryFactory.selectFrom(QPost.post)
+            .leftJoin(QPost.post.comments)
             .fetchJoin()
-            .where(QPostContent.postContent.post.postId.`in`(postIds))
+            .where(QPost.post.postId.`in`(postIds).and(permission))
             .fetch()
 
-        jpaQueryFactory.selectFrom(QPostHashtag.postHashtag)
-            .leftJoin(QPostHashtag.postHashtag)
+        jpaQueryFactory.selectFrom(QPost.post)
+            .leftJoin(QPost.post.contents)
             .fetchJoin()
-            .where(QPostHashtag.postHashtag.post.postId.`in`(postIds))
+            .where(QPost.post.postId.`in`(postIds).and(permission))
             .fetch()
 
-        jpaQueryFactory.selectFrom(QPostViews.postViews)
-            .leftJoin(QPostViews.postViews.post)
+        jpaQueryFactory.selectFrom(QPost.post)
+            .leftJoin(QPost.post.bookmarkUsers)
             .fetchJoin()
-            .leftJoin(QPostViews.postViews.readerUserProfile)
-            .fetchJoin()
-            .where(QPostViews.postViews.post.postId.`in`(postIds))
+            .where(QPost.post.postId.`in`(postIds).and(permission))
             .fetch()
 
-        jpaQueryFactory.selectFrom(QPostComment.postComment)
-            .leftJoin(QPostComment.postComment)
+        jpaQueryFactory.selectFrom(QPost.post)
+            .leftJoin(QPost.post.hashtags)
             .fetchJoin()
-            .where(QPostComment.postComment.post.postId.`in`(postIds))
+            .where(QPost.post.postId.`in`(postIds).and(permission))
             .fetch()
 
-        jpaQueryFactory.selectFrom(QPostBookmark.postBookmark)
-            .leftJoin(QPostBookmark.postBookmark.post)
-            .fetchJoin()
-            .where(QPostBookmark.postBookmark.post.postId.`in`(postIds))
-            .fetch()
+        return result;
 
-        return posts
+
     }
 
     override fun deleteAllPostHashtagByPost(post: Post) {
