@@ -9,5 +9,5 @@ import org.springframework.stereotype.Repository
 @Repository
 interface PostBookmarkRepository: CrudRepository<PostBookmark, Long>{
     fun existsPostBookmarkByUserProfileAndPost(userProfile: UserProfile, post: Post): Boolean
-    fun findTopByUserProfileAndPost(userProfile: UserProfile, post: Post): PostBookmark
+    fun deletePostBookmarkByUserProfileAndPost(userProfile: UserProfile, post: Post)
 }
