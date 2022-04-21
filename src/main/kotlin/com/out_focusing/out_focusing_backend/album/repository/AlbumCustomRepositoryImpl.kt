@@ -29,7 +29,7 @@ class AlbumCustomRepositoryImpl(
             .execute()
     }
 
-    override fun getMyAlbum(userProfile: UserProfile): List<Album> {
+    override fun getMyAlbum(userProfile: UserProfile, pageable: Pageable): List<Album> {
         jpaQueryFactory.selectFrom(QAlbumBookmark.albumBookmark)
             .leftJoin(QAlbumBookmark.albumBookmark.album)
             .fetchJoin()
@@ -43,10 +43,12 @@ class AlbumCustomRepositoryImpl(
             .fetchJoin()
             .where(QAlbum.album.writerUserProfile.eq(userProfile))
             .distinct()
+            .offset(pageable.offset)
+            .limit(pageable.pageSize.toLong())
             .fetch()
     }
 
-    override fun getUserAlbum(userProfile: UserProfile): List<Album> {
+    override fun getUserAlbum(userProfile: UserProfile, pageable: Pageable): List<Album> {
         jpaQueryFactory.selectFrom(QAlbumBookmark.albumBookmark)
             .leftJoin(QAlbumBookmark.albumBookmark.album)
             .fetchJoin()
@@ -60,6 +62,8 @@ class AlbumCustomRepositoryImpl(
             .fetchJoin()
             .where(QAlbum.album.writerUserProfile.eq(userProfile).and(QAlbum.album.secret.isFalse))
             .distinct()
+            .offset(pageable.offset)
+            .limit(pageable.pageSize.toLong())
             .fetch()
     }
 

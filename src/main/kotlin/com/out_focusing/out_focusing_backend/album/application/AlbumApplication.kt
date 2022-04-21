@@ -121,31 +121,31 @@ class AlbumApplication(
 
         val userProfile = userProfileRepository.findById(userId).orElseThrow { UserNotExistsException }
 
-        val album = albumRepository.getAlbumDetail(albumId, userProfile) ?: throw AlbumNotFoundException;
+        val album = albumRepository.getAlbumDetail(albumId, userProfile) ?: throw AlbumNotFoundException
 
         return AlbumDetailResponse.toAlbumDetailResponse(album, userProfile)
     }
 
 
-    fun getMyAlbum(): List<AlbumSummaryResponse> {
+    fun getMyAlbum(pageable: Pageable): List<AlbumSummaryResponse> {
         val userDetails = SecurityContextHolder.getContext().authentication.principal as UserDetails
         val userId = userDetails.username
 
         val userProfile =
             userProfileRepository.findById(userId).orElseThrow { UserNotExistsException }
 
-        return albumRepository.getMyAlbum(userProfile).map { album ->
+        return albumRepository.getMyAlbum(userProfile, pageable).map { album ->
             AlbumSummaryResponse.toAlbumSummaryResponse(album, userProfile)
         }
     }
 
-    fun getUserAlbum(userId: String): List<AlbumSummaryResponse> {
+    fun getUserAlbum(userId: String, pageable: Pageable): List<AlbumSummaryResponse> {
         val userDetails = SecurityContextHolder.getContext().authentication.principal as UserDetails
 
         val writer = userProfileRepository.findById(userId).orElseThrow { UserNotFoundException }
         val userProfile = userProfileRepository.findById(userDetails.username).orElseThrow { UserNotFoundException }
 
-        return albumRepository.getUserAlbum(writer)
+        return albumRepository.getUserAlbum(writer, pageable)
             .map { album -> AlbumSummaryResponse.toAlbumSummaryResponse(album, userProfile) }
     }
 

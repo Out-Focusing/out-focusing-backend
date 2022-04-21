@@ -58,15 +58,15 @@ class AlbumApi(private val albumApplication: AlbumApplication) {
     @Operation(summary = "자신이 작성한 앨범 조회")
     @GetMapping("/my")
     @ResponseStatus(HttpStatus.OK)
-    fun getMyAlbum(): List<AlbumSummaryResponse> {
-        return albumApplication.getMyAlbum()
+    fun getMyAlbum(pageable: Pageable): List<AlbumSummaryResponse> {
+        return albumApplication.getMyAlbum(pageable)
     }
 
     @Operation(summary = "유저가 작성한 앨범 조회")
     @GetMapping("/user/{userId}")
     @ResponseStatus(HttpStatus.OK)
-    fun getUserAlbum(@PathVariable userId: String): List<AlbumSummaryResponse> {
-        return albumApplication.getUserAlbum(userId)
+    fun getUserAlbum(@PathVariable userId: String, pageable: Pageable): List<AlbumSummaryResponse> {
+        return albumApplication.getUserAlbum(userId, pageable)
     }
 
     @Operation(summary = "앨범 조회")
