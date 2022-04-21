@@ -71,8 +71,7 @@ class AlbumApi(private val albumApplication: AlbumApplication) {
 
     @Operation(summary = "앨범 조회")
     @GetMapping
-    fun getAlbum(pageable: Pageable): List<AlbumSummaryResponse> {
-        return albumApplication.getAlbum(pageable)
+    fun searchAlbum(@RequestParam("keyword") keyword: String, pageable: Pageable): List<AlbumSummaryResponse> {
+        return albumApplication.searchAlbumByKeyword(keyword, pageable)
     }
-
 }

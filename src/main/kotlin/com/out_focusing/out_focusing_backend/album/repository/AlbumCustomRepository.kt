@@ -10,5 +10,5 @@ interface AlbumCustomRepository {
     fun getMyAlbum(userProfile: UserProfile): List<Album>
     fun getUserAlbum(userProfile: UserProfile): List<Album>
     fun getAlbumDetail(albumId: Long, userProfile: UserProfile?): Album?
-    fun getAlbum(pageable: Pageable): List<Album>
+    fun findAlbumsByAlbumId(albumIds: List<Long>, userProfile: UserProfile?): List<Album>
 }
