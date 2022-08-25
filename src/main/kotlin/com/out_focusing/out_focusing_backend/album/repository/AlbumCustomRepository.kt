@@ -7,8 +7,8 @@ import org.springframework.data.domain.Pageable
 interface AlbumCustomRepository {
 
     fun removeAlbum(album: Album)
-    fun getMyAlbum(userProfile: UserProfile): List<Album>
-    fun getUserAlbum(userProfile: UserProfile): List<Album>
+    fun getMyAlbum(userProfile: UserProfile, pageable: Pageable): List<Album>
+    fun getUserAlbum(userProfile: UserProfile, pageable: Pageable): List<Album>
     fun getAlbumDetail(albumId: Long, userProfile: UserProfile?): Album?
-    fun getAlbum(pageable: Pageable): List<Album>
+    fun findAlbumsByAlbumId(albumIds: List<Long>, userProfile: UserProfile?): List<Album>
 }

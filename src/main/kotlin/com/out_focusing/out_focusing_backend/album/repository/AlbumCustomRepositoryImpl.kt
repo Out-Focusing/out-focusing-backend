@@ -29,7 +29,7 @@ class AlbumCustomRepositoryImpl(
             .execute()
     }
 
-    override fun getMyAlbum(userProfile: UserProfile): List<Album> {
+    override fun getMyAlbum(userProfile: UserProfile, pageable: Pageable): List<Album> {
         jpaQueryFactory.selectFrom(QAlbumBookmark.albumBookmark)
             .leftJoin(QAlbumBookmark.albumBookmark.album)
             .fetchJoin()
@@ -43,10 +43,12 @@ class AlbumCustomRepositoryImpl(
             .fetchJoin()
             .where(QAlbum.album.writerUserProfile.eq(userProfile))
             .distinct()
+            .offset(pageable.offset)
+            .limit(pageable.pageSize.toLong())
             .fetch()
     }
 
-    override fun getUserAlbum(userProfile: UserProfile): List<Album> {
+    override fun getUserAlbum(userProfile: UserProfile, pageable: Pageable): List<Album> {
         jpaQueryFactory.selectFrom(QAlbumBookmark.albumBookmark)
             .leftJoin(QAlbumBookmark.albumBookmark.album)
             .fetchJoin()
@@ -60,6 +62,8 @@ class AlbumCustomRepositoryImpl(
             .fetchJoin()
             .where(QAlbum.album.writerUserProfile.eq(userProfile).and(QAlbum.album.secret.isFalse))
             .distinct()
+            .offset(pageable.offset)
+            .limit(pageable.pageSize.toLong())
             .fetch()
     }
 
@@ -81,26 +85,19 @@ class AlbumCustomRepositoryImpl(
             .fetchOne()
     }
 
-    override fun getAlbum(pageable: Pageable): List<Album> {
-
-        val subQuery = jpaQueryFactory.selectFrom(QAlbum.album)
-            .where(QAlbum.album.secret.isFalse)
-            .offset(pageable.offset)
-            .limit(pageable.pageSize.toLong())
-            .fetch()
-
+    override fun findAlbumsByAlbumId(albumIds: List<Long>, userProfile: UserProfile?): List<Album> {
         jpaQueryFactory.selectFrom(QAlbumBookmark.albumBookmark)
             .leftJoin(QAlbumBookmark.albumBookmark.album)
             .fetchJoin()
             .leftJoin(QAlbumBookmark.albumBookmark.userProfile)
             .fetchJoin()
-            .where(QAlbumBookmark.albumBookmark.album.`in`(subQuery))
+            .where(QAlbumBookmark.albumBookmark.album.albumId.`in`(albumIds))
             .fetch()
 
         return jpaQueryFactory.selectFrom(QAlbum.album)
             .leftJoin(QAlbum.album.bookmarkUsers)
             .fetchJoin()
-            .where(QAlbum.album.`in`(subQuery))
+            .where(QAlbum.album.albumId.`in`(albumIds))
             .distinct()
             .fetch()
     }
