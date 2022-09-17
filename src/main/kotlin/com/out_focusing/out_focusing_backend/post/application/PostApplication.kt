@@ -9,13 +9,12 @@ import com.out_focusing.out_focusing_backend.post.domain.PostHashtag
 import com.out_focusing.out_focusing_backend.post.dto.*
 import com.out_focusing.out_focusing_backend.post.repository.*
 import com.out_focusing.out_focusing_backend.user.repository.UserProfileRepository
-import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.data.domain.Pageable
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.sql.SQLIntegrityConstraintViolationException
+import java.time.LocalDateTime
 
 @Service
 @Transactional(readOnly = true)
@@ -206,6 +205,19 @@ class PostApplication(
 
         return postRepository.findPostsByUserBookmark(targetUserProfile, pageable, myUserProfile).map {
             PostSummaryResponse.toPostSummaryResponse(it, myUserProfile)
+        }
+    }
+
+    fun getPostsMyFeed(pageable: Pageable): List<PostSummaryResponse> {
+        val userDetails = SecurityContextHolder.getContext().authentication.principal as UserDetails
+        val username = userDetails.username
+
+        val userProfile = userProfileRepository.findById(username).orElseThrow { UserNotExistsException }
+
+        val myFollows = userProfileRepository.getMyFollows(userProfile)
+
+        return postRepository.findPostsByUsersAfterDate(myFollows, pageable, userProfile, LocalDateTime.now().minusDays(3)).map {
+            PostSummaryResponse.toPostSummaryResponse(it, userProfile)
         }
     }
 

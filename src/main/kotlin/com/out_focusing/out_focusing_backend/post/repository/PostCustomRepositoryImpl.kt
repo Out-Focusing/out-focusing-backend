@@ -7,6 +7,7 @@ import com.out_focusing.out_focusing_backend.user.domain.UserProfile
 import com.querydsl.jpa.impl.JPAQueryFactory
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Repository
+import java.time.LocalDateTime
 
 @Repository
 class PostCustomRepositoryImpl(
@@ -103,6 +104,31 @@ class PostCustomRepositoryImpl(
         fetchJoinPosts(subQuery)
 
         return subQuery
+    }
+
+    override fun findPostsByUsersAfterDate(
+        userProfiles: List<UserProfile>,
+        pageable: Pageable,
+        myUserProfile: UserProfile?,
+        date: LocalDateTime,
+    ): List<Post> {
+        val permission = QPost.post.writerUserProfile.eq(myUserProfile).or(QPost.post.secret.isFalse)
+
+        val result = jpaQueryFactory.selectFrom(QPost.post)
+            .leftJoin(QPost.post.album)
+            .fetchJoin()
+            .leftJoin(QPost.post.writerUserProfile)
+            .fetchJoin()
+            .where(QPost.post.writerUserProfile.`in`(userProfiles)
+                .and(QPost.post.createdAt.after(date))
+                .and(permission))
+            .offset(pageable.offset)
+            .limit(pageable.pageSize.toLong())
+            .fetch()
+
+        fetchJoinPosts(result)
+
+        return result
     }
 
     override fun fetchJoinPosts(posts: List<Post>) {

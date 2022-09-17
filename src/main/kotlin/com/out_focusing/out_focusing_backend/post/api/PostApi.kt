@@ -65,6 +65,13 @@ class PostApi(
         return postApplication.getPostsByUser(userId, pageable)
     }
 
+    @Operation(summary = "유저의 최신 피드 조회")
+    @GetMapping("/my/feed")
+    @ResponseStatus(HttpStatus.OK)
+    fun getPostsMyFeed(pageable: Pageable): List<PostSummaryResponse> {
+        return postApplication.getPostsMyFeed(pageable)
+    }
+
     @Operation(summary = "자신이 작성한 게시글 조회")
     @GetMapping("/my")
     @ResponseStatus(HttpStatus.OK)
