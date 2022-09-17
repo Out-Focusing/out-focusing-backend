@@ -24,7 +24,6 @@ class PostApplication(
     private val postHashtagRepository: PostHashtagRepository,
     private val postContentRepository: PostContentRepository,
     private val postBookmarkRepository: PostBookmarkRepository,
-    private val esPostRepository: ESPostRepository,
     private val albumRepository: AlbumRepository,
     private val userProfileRepository: UserProfileRepository,
 ) {
@@ -129,7 +128,8 @@ class PostApplication(
 
         val userProfile = userProfileRepository.findById(userId).orElseThrow { UserNotExistsException }
 
-        val resultPostIds = esPostRepository.findByKeyword(keyword, pageable).map { it.id }.toList()
+//        val resultPostIds = esPostRepository.findByKeyword(keyword, pageable).map { it.id }.toList()
+        val resultPostIds = listOf<Long>()
 
         return postRepository.findPostsByPostIds(resultPostIds, userProfile).map {
             PostSummaryResponse.toPostSummaryResponse(it, userProfile)

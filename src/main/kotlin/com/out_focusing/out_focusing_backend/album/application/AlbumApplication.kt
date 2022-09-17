@@ -5,7 +5,6 @@ import com.out_focusing.out_focusing_backend.album.domain.AlbumBookmark
 import com.out_focusing.out_focusing_backend.album.dto.*
 import com.out_focusing.out_focusing_backend.album.repository.AlbumBookmarkRepository
 import com.out_focusing.out_focusing_backend.album.repository.AlbumRepository
-import com.out_focusing.out_focusing_backend.album.repository.ESAlbumRepository
 import com.out_focusing.out_focusing_backend.global.error.CustomException.*
 import com.out_focusing.out_focusing_backend.user.repository.UserProfileRepository
 import org.springframework.data.domain.Pageable
@@ -19,8 +18,7 @@ import org.springframework.transaction.annotation.Transactional
 class AlbumApplication(
     private val albumRepository: AlbumRepository,
     private val userProfileRepository: UserProfileRepository,
-    private val albumBookmarkRepository: AlbumBookmarkRepository,
-    private val esAlbumRepository: ESAlbumRepository
+    private val albumBookmarkRepository: AlbumBookmarkRepository
 ) {
 
     @Transactional
@@ -154,7 +152,7 @@ class AlbumApplication(
 
         val userProfile = userProfileRepository.findById(userDetails.username).orElseThrow { UserNotExistsException }
 
-        val resultAlbumIds = esAlbumRepository.findByKeyword(keyword, pageable).map { it.id }.toList()
+        val resultAlbumIds = listOf<Long>()
 
         return albumRepository.findAlbumsByAlbumId(resultAlbumIds, userProfile)
             .map { album -> AlbumSummaryResponse.toAlbumSummaryResponse(album, userProfile) }
