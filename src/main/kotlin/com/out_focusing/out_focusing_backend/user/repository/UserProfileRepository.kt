@@ -5,6 +5,6 @@ import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface UserProfileRepository : CrudRepository<UserProfile, String> {
+interface UserProfileRepository : CrudRepository<UserProfile, String>, UserProfileCustomRepository {
 
 }
