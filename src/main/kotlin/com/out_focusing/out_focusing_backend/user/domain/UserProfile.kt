@@ -22,15 +22,15 @@ class UserProfile(
     @ManyToMany(cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
     @JoinTable(
         name = "followed_user",
-        joinColumns = [JoinColumn(name = "following_id")],
-        inverseJoinColumns = [JoinColumn(name = "followed_id")]
+        joinColumns = [JoinColumn(name = "following_user_id")],
+        inverseJoinColumns = [JoinColumn(name = "followed_user_id")]
     )
     val followedUsers: List<UserProfile>,
     @ManyToMany(cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
     @JoinTable(
         name = "followed_user",
-        joinColumns = [JoinColumn(name = "followed_id")],
-        inverseJoinColumns = [JoinColumn(name = "following_id")]
+        joinColumns = [JoinColumn(name = "followed_user_id")],
+        inverseJoinColumns = [JoinColumn(name = "following_user_id")]
     )
     val followingUsers: List<UserProfile>,
     @ManyToMany(cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
