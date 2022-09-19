@@ -108,7 +108,7 @@ class AlbumCustomRepositoryImpl(
         userProfile: UserProfile?,
         date: LocalDateTime,
     ): List<Album> {
-//        val bookmarkedAlbum = jpaQueryFactory.selectFrom(QAlbumBookmark.albumBookmark)
+        val resultAlbums = jpaQueryFactory.selectFrom(QPost.post)
             .leftJoin(QPost.post.album)
             .fetchJoin()
             .where(QPost.post.createdAt.after(date)
