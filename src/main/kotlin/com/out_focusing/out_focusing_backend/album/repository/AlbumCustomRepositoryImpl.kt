@@ -3,15 +3,17 @@ package com.out_focusing.out_focusing_backend.album.repository
 import com.out_focusing.out_focusing_backend.album.domain.Album
 import com.out_focusing.out_focusing_backend.album.domain.QAlbum
 import com.out_focusing.out_focusing_backend.album.domain.QAlbumBookmark
+import com.out_focusing.out_focusing_backend.post.domain.QPost
 import com.out_focusing.out_focusing_backend.user.domain.UserProfile
 import com.querydsl.jpa.impl.JPAQueryFactory
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDateTime
 
 @Repository
 class AlbumCustomRepositoryImpl(
-    private val jpaQueryFactory: JPAQueryFactory
+    private val jpaQueryFactory: JPAQueryFactory,
 ) : AlbumCustomRepository {
 
     @Transactional
@@ -100,5 +102,28 @@ class AlbumCustomRepositoryImpl(
             .where(QAlbum.album.albumId.`in`(albumIds))
             .distinct()
             .fetch()
+    }
+
+    override fun getUpdatedBookmarkAlbumAfterDate(
+        userProfile: UserProfile?,
+        date: LocalDateTime,
+    ): List<Album> {
+//        val bookmarkedAlbum = jpaQueryFactory.selectFrom(QAlbumBookmark.albumBookmark)
+            .leftJoin(QPost.post.album)
+            .fetchJoin()
+            .where(QPost.post.createdAt.after(date)
+                .and(QPost.post.album.bookmarkUsers.any().userProfile.eq(userProfile)))
+            .orderBy(QPost.post.createdAt.desc())
+            .fetch()
+            .map { it.album }
+            .distinct()
+
+        jpaQueryFactory.selectFrom(QAlbum.album)
+            .leftJoin(QAlbum.album.bookmarkUsers)
+            .fetchJoin()
+            .where(QAlbum.album.`in`(resultAlbums))
+            .fetch()
+
+        return resultAlbums
     }
 }

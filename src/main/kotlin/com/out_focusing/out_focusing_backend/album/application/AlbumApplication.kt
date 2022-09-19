@@ -12,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDateTime
 
 @Service
 @Transactional(readOnly = true)
@@ -155,6 +156,17 @@ class AlbumApplication(
         val resultAlbumIds = listOf<Long>()
 
         return albumRepository.findAlbumsByAlbumId(resultAlbumIds, userProfile)
+            .map { album -> AlbumSummaryResponse.toAlbumSummaryResponse(album, userProfile) }
+    }
+
+    fun getUpdatedBookmarkAlbum(): List<AlbumSummaryResponse> {
+        val userDetails = SecurityContextHolder.getContext().authentication.principal as UserDetails
+        val userId = userDetails.username
+
+        val userProfile =
+            userProfileRepository.findById(userId).orElseThrow { UserNotExistsException }
+
+        return albumRepository.getUpdatedBookmarkAlbumAfterDate(userProfile, LocalDateTime.now().minusDays(3))
             .map { album -> AlbumSummaryResponse.toAlbumSummaryResponse(album, userProfile) }
     }
 

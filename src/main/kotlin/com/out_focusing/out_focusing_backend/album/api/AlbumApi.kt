@@ -74,4 +74,10 @@ class AlbumApi(private val albumApplication: AlbumApplication) {
     fun searchAlbum(@RequestParam("keyword") keyword: String, pageable: Pageable): List<AlbumSummaryResponse> {
         return albumApplication.searchAlbumByKeyword(keyword, pageable)
     }
+
+    @Operation(summary = "업데이트된 북마크한 앨범 조회")
+    @GetMapping("/my/bookmarks/feed")
+    fun getUpdatedBookmarkAlbum(): List<AlbumSummaryResponse> {
+        return albumApplication.getUpdatedBookmarkAlbum()
+    }
 }
