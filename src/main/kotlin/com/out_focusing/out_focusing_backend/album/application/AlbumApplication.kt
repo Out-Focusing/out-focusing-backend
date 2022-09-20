@@ -159,6 +159,18 @@ class AlbumApplication(
             .map { album -> AlbumSummaryResponse.toAlbumSummaryResponse(album, userProfile) }
     }
 
+    fun getMyBookmarkAlbum(pageable: Pageable): List<AlbumSummaryResponse> {
+        val userDetails = SecurityContextHolder.getContext().authentication.principal as UserDetails
+        val userId = userDetails.username
+
+        val userProfile =
+            userProfileRepository.findById(userId).orElseThrow { UserNotExistsException }
+
+        return albumRepository.getMyBookmarkAlbum(userProfile, pageable).map { album ->
+            AlbumSummaryResponse.toAlbumSummaryResponse(album, userProfile)
+        }
+    }
+
     fun getUpdatedBookmarkAlbum(): List<AlbumSummaryResponse> {
         val userDetails = SecurityContextHolder.getContext().authentication.principal as UserDetails
         val userId = userDetails.username
