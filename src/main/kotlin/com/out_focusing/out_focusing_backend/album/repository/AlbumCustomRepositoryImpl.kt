@@ -104,6 +104,25 @@ class AlbumCustomRepositoryImpl(
             .fetch()
     }
 
+    override fun getMyBookmarkAlbum(userProfile: UserProfile?, pageable: Pageable): List<Album> {
+        jpaQueryFactory.selectFrom(QAlbumBookmark.albumBookmark)
+            .leftJoin(QAlbumBookmark.albumBookmark.album)
+            .fetchJoin()
+            .leftJoin(QAlbumBookmark.albumBookmark.userProfile)
+            .fetchJoin()
+            .where(QAlbumBookmark.albumBookmark.userProfile.eq(userProfile))
+            .fetch()
+
+        return jpaQueryFactory.selectFrom(QAlbum.album)
+            .leftJoin(QAlbum.album.bookmarkUsers)
+            .fetchJoin()
+            .where(QAlbum.album.bookmarkUsers.any().userProfile.eq(userProfile))
+            .distinct()
+            .offset(pageable.offset)
+            .limit(pageable.pageSize.toLong())
+            .fetch()
+    }
+
     override fun getUpdatedBookmarkAlbumAfterDate(
         userProfile: UserProfile?,
         date: LocalDateTime,
