@@ -9,9 +9,12 @@ import org.springframework.stereotype.Repository
 class UserProfileCustomRepositoryImpl(
     private val jpaQueryFactory: JPAQueryFactory
 ): UserProfileCustomRepository {
-    override fun getMyFollows(userProfile: UserProfile): List<UserProfile> {
+    override fun getUsersFollowers(userProfile: UserProfile): List<UserProfile> {
         return jpaQueryFactory.selectFrom(QUserProfile.userProfile)
-            .where(QUserProfile.userProfile.`in`(userProfile.followedUsers))
+            .distinct()
+            .leftJoin(QUserProfile.userProfile.followingUsers)
+            .fetchJoin()
+            .where(QUserProfile.userProfile.followingUsers.contains(userProfile))
             .fetch()
     }
 }

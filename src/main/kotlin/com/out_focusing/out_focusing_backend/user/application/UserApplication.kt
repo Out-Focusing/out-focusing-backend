@@ -1,8 +1,8 @@
 package com.out_focusing.out_focusing_backend.user.application
 
-import com.out_focusing.out_focusing_backend.global.error.CustomException
 import com.out_focusing.out_focusing_backend.global.error.CustomException.*
 import com.out_focusing.out_focusing_backend.user.dto.UserProfileResponse
+import com.out_focusing.out_focusing_backend.user.dto.UserProfileSummaryResponse
 import com.out_focusing.out_focusing_backend.user.repository.UserProfileRepository
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UserDetails
@@ -34,6 +34,18 @@ class UserApplication(
         val userProfile = userProfileRepository.findById(userDetails.username).orElseThrow { UserNotExistsException }
 
         return UserProfileResponse.toUserProfileResponse(userProfile, userProfile)
+    }
+
+    fun getUsersFollowers(userId: String): List<UserProfileSummaryResponse> {
+        val userDetails = SecurityContextHolder.getContext().authentication.principal as UserDetails
+
+        val myProfile = userProfileRepository.findById(userDetails.username).orElseThrow { UserNotExistsException }
+
+        val userProfile = userProfileRepository.findById(userId).orElseThrow { UserNotFoundException }
+
+        return userProfileRepository.getUsersFollowers(userProfile).map {
+            UserProfileSummaryResponse.toUserProfileSummaryResponse(it, myProfile)
+        }
     }
 
 }

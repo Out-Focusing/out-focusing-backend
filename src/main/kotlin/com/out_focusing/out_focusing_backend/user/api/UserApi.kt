@@ -2,6 +2,7 @@ package com.out_focusing.out_focusing_backend.user.api
 
 import com.out_focusing.out_focusing_backend.user.application.UserApplication
 import com.out_focusing.out_focusing_backend.user.dto.UserProfileResponse
+import com.out_focusing.out_focusing_backend.user.dto.UserProfileSummaryResponse
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.HttpStatus
@@ -32,8 +33,8 @@ class UserApi(
 
     @Operation(summary = "Get User's Followers")
     @GetMapping("/{userId}/followers")
-    fun getMyFollowers(@PathVariable userId: String) {
-       // TODO
+    fun getUsersFollowers(@PathVariable userId: String): List<UserProfileSummaryResponse> {
+       return userApplication.getUsersFollowers(userId)
     }
 
     @Operation(summary  = "Get User's Followings")

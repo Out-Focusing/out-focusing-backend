@@ -214,7 +214,7 @@ class PostApplication(
 
         val userProfile = userProfileRepository.findById(username).orElseThrow { UserNotExistsException }
 
-        val myFollows = userProfileRepository.getMyFollows(userProfile)
+        val myFollows = userProfileRepository.getUsersFollowers(userProfile)
 
         return postRepository.findPostsByUsersAfterDate(myFollows, pageable, userProfile, LocalDateTime.now().minusDays(3)).map {
             PostSummaryResponse.toPostSummaryResponse(it, userProfile)
