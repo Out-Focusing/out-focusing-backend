@@ -28,4 +28,12 @@ class UserApplication(
         }.orElseThrow { UserNotFoundException }
     }
 
+    fun getMyProfile(): UserProfileResponse {
+        val userDetails = SecurityContextHolder.getContext().authentication.principal as UserDetails
+
+        val userProfile = userProfileRepository.findById(userDetails.username).orElseThrow { UserNotExistsException }
+
+        return UserProfileResponse.toUSerProfileResponse(userProfile, userProfile)
+    }
+
 }

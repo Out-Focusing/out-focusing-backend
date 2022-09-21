@@ -26,8 +26,8 @@ class UserApi(
 
     @Operation(summary = "Get My Info")
     @GetMapping("/my")
-    fun getMyInfo() {
-        // TODO
+    fun getMyInfo(): UserProfileResponse {
+        return userApplication.getMyProfile()
     }
 
     @Operation(summary = "Get User's Followers")
