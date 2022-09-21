@@ -48,4 +48,15 @@ class UserApplication(
         }
     }
 
+    fun getUsersFollowings(userId: String): List<UserProfileSummaryResponse> {
+        val userDetails = SecurityContextHolder.getContext().authentication.principal as UserDetails
+
+        val myProfile = userProfileRepository.findById(userDetails.username).orElseThrow { UserNotExistsException }
+
+        val userProfile = userProfileRepository.findById(userId).orElseThrow { UserNotFoundException }
+
+        return userProfileRepository.getUsersFollowings(userProfile).map {
+            UserProfileSummaryResponse.toUserProfileSummaryResponse(it, myProfile)
+        }
+    }
 }

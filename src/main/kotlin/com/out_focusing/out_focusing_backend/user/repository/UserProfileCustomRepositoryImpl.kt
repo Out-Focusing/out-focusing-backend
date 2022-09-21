@@ -17,4 +17,19 @@ class UserProfileCustomRepositoryImpl(
             .where(QUserProfile.userProfile.followingUsers.contains(userProfile))
             .fetch()
     }
+
+    override fun getUsersFollowings(userProfile: UserProfile): List<UserProfile> {
+        val result = jpaQueryFactory.selectFrom(QUserProfile.userProfile)
+            .distinct()
+            .leftJoin(QUserProfile.userProfile.followedUsers)
+            .fetchJoin()
+            .where(QUserProfile.userProfile.followedUsers.contains(userProfile))
+            .fetch()
+
+        return jpaQueryFactory.selectFrom(QUserProfile.userProfile)
+            .leftJoin(QUserProfile.userProfile.followingUsers)
+            .fetchJoin()
+            .where(QUserProfile.userProfile.`in`(result))
+            .fetch()
+    }
 }

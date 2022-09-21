@@ -39,7 +39,7 @@ class UserApi(
 
     @Operation(summary  = "Get User's Followings")
     @GetMapping("/{userId}/followings")
-    fun getMyFollowings(@PathVariable userId: String) {
-        // TODO
+    fun getUsersFollowings(@PathVariable userId: String): List<UserProfileSummaryResponse> {
+        return userApplication.getUsersFollowings(userId)
     }
 }
