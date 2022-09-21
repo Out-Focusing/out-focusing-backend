@@ -14,7 +14,7 @@ data class UserProfileResponse(
 ) {
 
     companion object {
-        fun toUSerProfileResponse(
+        fun toUserProfileResponse(
             userProfile: UserProfile,
             myProfile: UserProfile?,
         ): UserProfileResponse {

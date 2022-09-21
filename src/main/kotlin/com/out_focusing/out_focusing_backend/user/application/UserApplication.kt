@@ -21,7 +21,7 @@ class UserApplication(
         val userProfile = userProfileRepository.findById(userDetails.username).orElseThrow { UserNotExistsException }
 
         return userProfileRepository.findById(userId).map {
-            UserProfileResponse.toUSerProfileResponse(
+            UserProfileResponse.toUserProfileResponse(
                 it,
                 userProfile
             )
@@ -33,7 +33,7 @@ class UserApplication(
 
         val userProfile = userProfileRepository.findById(userDetails.username).orElseThrow { UserNotExistsException }
 
-        return UserProfileResponse.toUSerProfileResponse(userProfile, userProfile)
+        return UserProfileResponse.toUserProfileResponse(userProfile, userProfile)
     }
 
 }
