@@ -18,7 +18,7 @@ data class UserProfileSummaryResponse(
                 userId = userProfile.userId,
                 name = userProfile.name,
                 profileImage = userProfile.profileImage,
-                following = if(myProfile == null) false else userProfile.followingUsers.contains(myProfile)
+                following = if (myProfile == null) false else userProfile.followedUsers.any { it.followingUser == myProfile }
             )
         }
     }

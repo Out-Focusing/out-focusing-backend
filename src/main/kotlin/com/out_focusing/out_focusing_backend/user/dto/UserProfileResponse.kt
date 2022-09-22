@@ -1,5 +1,6 @@
 package com.out_focusing.out_focusing_backend.user.dto
 
+import com.out_focusing.out_focusing_backend.user.domain.FollowedUser
 import com.out_focusing.out_focusing_backend.user.domain.UserProfile
 
 data class UserProfileResponse(
@@ -26,7 +27,7 @@ data class UserProfileResponse(
                 userProfile.readme,
                 userProfile.followedUsers.size.toLong(),
                 userProfile.followingUsers.size.toLong(),
-                if (myProfile == null) false else userProfile.followingUsers.any { it == myProfile }
+                if (myProfile == null) false else userProfile.followedUsers.any { it.followingUser == myProfile  }
             )
         }
     }
