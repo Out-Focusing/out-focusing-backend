@@ -23,6 +23,7 @@ open class CustomException(val code: HttpStatus, override val message: String) :
     object AlbumUpdateForbiddenException : ForbiddenException("앨범 수정 권한이 없습니다.")
     object PostDeleteForbiddenException: ForbiddenException("게시글 삭제 권한이 없습니다.")
     object PostUpdateForbiddenException : ForbiddenException("게시글 수정 권한이 없습니다.")
+    object UserFollowYourselfException : ForbiddenException("자기 자신을 팔로우 할 수 없습니다.")
 
     object UserNotFoundException : NotFoundException("존재하지 않는 유저입니다.")
     object AlbumNotFoundException : NotFoundException("존재하지 않은 앨범입니다.")
@@ -33,5 +34,6 @@ open class CustomException(val code: HttpStatus, override val message: String) :
     object UserIdConflictException : ConflictException("중복된 유저 아이디입니다.")
     object AlreadyAlbumBookmarkedException: ConflictException("이미 북마크에 추가한 앨범입니다.")
     object AlreadyPostBookmarkedException: ConflictException("이미 북마크에 추가한 게시글입니다.")
+    object AlreadyUserFollowedException : ConflictException("이미 팔로우한 사용자입니다.")
 
 }
