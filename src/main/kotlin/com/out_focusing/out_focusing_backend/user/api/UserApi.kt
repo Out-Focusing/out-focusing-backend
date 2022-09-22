@@ -6,12 +6,7 @@ import com.out_focusing.out_focusing_backend.user.dto.UserProfileSummaryResponse
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.HttpStatus
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.ResponseStatus
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @Tag(name = "User")
 @RestController
@@ -49,5 +44,12 @@ class UserApi(
     @ResponseStatus(HttpStatus.CREATED)
     fun followUser(@PathVariable userId: String) {
         userApplication.followUser(userId)
+    }
+
+    @Operation(summary = "Unfollow User")
+    @DeleteMapping("/unfollow/{userId}")
+    @ResponseStatus(HttpStatus.OK)
+    fun unfollowUser(@PathVariable userId: String) {
+        userApplication.unfollowUser(userId)
     }
 }

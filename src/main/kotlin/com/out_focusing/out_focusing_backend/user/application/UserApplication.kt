@@ -75,10 +75,28 @@ class UserApplication(
             throw UserFollowYourselfException
         }
 
-        if(followedUserRepository.existsByFollowingUserAndFollowedUser(myProfile, userProfile)) {
-            throw UserAlreadyFollowedException
+        if (followedUserRepository.existsByFollowingUserAndFollowedUser(myProfile, userProfile)) {
+            throw AlreadyUserFollowedException
         }
 
         followedUserRepository.save(FollowedUser(myProfile, userProfile))
+    }
+
+    @Transactional
+    fun unfollowUser(userId: String) {
+        val userDetails = SecurityContextHolder.getContext().authentication.principal as UserDetails
+
+        val myProfile = userProfileRepository.findById(userDetails.username).orElseThrow { UserNotExistsException }
+
+        val userProfile = userProfileRepository.findById(userId).orElseThrow { UserNotFoundException }
+
+        if (myProfile == userProfile)
+            throw UserUnfollowYourselfException
+
+        if (followedUserRepository.existsByFollowingUserAndFollowedUser(myProfile, userProfile)) {
+            followedUserRepository.deleteByFollowingUserAndFollowedUser(myProfile, userProfile)
+        } else {
+            throw UserNotFollowedException
+        }
     }
 }

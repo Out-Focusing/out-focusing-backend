@@ -8,4 +8,5 @@ import org.springframework.stereotype.Repository
 @Repository
 interface FollowedUserRepository : CrudRepository<FollowedUser, Long> {
     fun existsByFollowingUserAndFollowedUser(followingUser: UserProfile, followedUser: UserProfile): Boolean
+    fun deleteByFollowingUserAndFollowedUser(followingUser: UserProfile, followedUser: UserProfile)
 }
