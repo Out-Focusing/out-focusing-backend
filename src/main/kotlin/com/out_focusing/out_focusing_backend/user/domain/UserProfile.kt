@@ -19,20 +19,10 @@ class UserProfile(
     val profileImage: String,
     @Column(length = 255)
     val readme: String,
-    @ManyToMany(cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
-    @JoinTable(
-        name = "followed_user",
-        joinColumns = [JoinColumn(name = "following_user_id")],
-        inverseJoinColumns = [JoinColumn(name = "followed_user_id")]
-    )
-    val followedUsers: List<UserProfile>,
-    @ManyToMany(cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
-    @JoinTable(
-        name = "followed_user",
-        joinColumns = [JoinColumn(name = "followed_user_id")],
-        inverseJoinColumns = [JoinColumn(name = "following_user_id")]
-    )
-    val followingUsers: List<UserProfile>,
+    @OneToMany(mappedBy = "followedUser", fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
+    val followedUsers: List<FollowedUser>,
+    @OneToMany(mappedBy = "followingUser", fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
+    val followingUsers: List<FollowedUser>,
     @ManyToMany(cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
     @JoinTable(
         name = "blocked_user",
