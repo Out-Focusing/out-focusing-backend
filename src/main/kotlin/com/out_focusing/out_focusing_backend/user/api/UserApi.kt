@@ -1,9 +1,9 @@
 package com.out_focusing.out_focusing_backend.user.api
 
 import com.out_focusing.out_focusing_backend.user.application.UserApplication
-import com.out_focusing.out_focusing_backend.user.dto.ModifyUserProfileRequest
-import com.out_focusing.out_focusing_backend.user.dto.UserProfileResponse
-import com.out_focusing.out_focusing_backend.user.dto.UserProfileSummaryResponse
+import com.out_focusing.out_focusing_backend.user.dto.request.ModifyUserProfileRequest
+import com.out_focusing.out_focusing_backend.user.dto.response.UserProfileResponse
+import com.out_focusing.out_focusing_backend.user.dto.response.UserProfileSummaryResponse
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.HttpStatus

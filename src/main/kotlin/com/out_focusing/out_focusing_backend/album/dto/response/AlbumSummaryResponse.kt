@@ -1,4 +1,4 @@
-package com.out_focusing.out_focusing_backend.album.dto
+package com.out_focusing.out_focusing_backend.album.dto.response
 
 import com.out_focusing.out_focusing_backend.album.domain.Album
 import com.out_focusing.out_focusing_backend.user.domain.UserProfile

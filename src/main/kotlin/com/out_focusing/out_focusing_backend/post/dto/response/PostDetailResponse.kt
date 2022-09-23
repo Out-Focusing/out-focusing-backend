@@ -1,4 +1,4 @@
-package com.out_focusing.out_focusing_backend.post.dto
+package com.out_focusing.out_focusing_backend.post.dto.response
 
 import com.out_focusing.out_focusing_backend.post.domain.Post
 import com.out_focusing.out_focusing_backend.user.domain.UserProfile

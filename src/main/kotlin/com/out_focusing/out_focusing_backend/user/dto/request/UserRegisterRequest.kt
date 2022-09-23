@@ -1,4 +1,4 @@
-package com.out_focusing.out_focusing_backend.user.dto
+package com.out_focusing.out_focusing_backend.user.dto.request
 
 import javax.validation.constraints.Email
 import javax.validation.constraints.Max

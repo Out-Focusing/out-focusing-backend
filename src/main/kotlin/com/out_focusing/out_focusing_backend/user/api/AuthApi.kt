@@ -1,7 +1,11 @@
 package com.out_focusing.out_focusing_backend.user.api
 
 import com.out_focusing.out_focusing_backend.user.application.AuthApplication
-import com.out_focusing.out_focusing_backend.user.dto.*
+import com.out_focusing.out_focusing_backend.user.dto.request.ReissueTokenRequest
+import com.out_focusing.out_focusing_backend.user.dto.request.UserLoginRequest
+import com.out_focusing.out_focusing_backend.user.dto.request.UserRegisterRequest
+import com.out_focusing.out_focusing_backend.user.dto.response.ReissueTokenResponse
+import com.out_focusing.out_focusing_backend.user.dto.response.UserLoginResponse
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.HttpStatus

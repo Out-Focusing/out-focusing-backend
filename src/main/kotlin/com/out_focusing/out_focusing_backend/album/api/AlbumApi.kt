@@ -1,7 +1,11 @@
 package com.out_focusing.out_focusing_backend.album.api
 
 import com.out_focusing.out_focusing_backend.album.application.AlbumApplication
-import com.out_focusing.out_focusing_backend.album.dto.*
+import com.out_focusing.out_focusing_backend.album.dto.request.GenerateAlbumRequest
+import com.out_focusing.out_focusing_backend.album.dto.request.ModifyAlbumRequest
+import com.out_focusing.out_focusing_backend.album.dto.response.AlbumDetailResponse
+import com.out_focusing.out_focusing_backend.album.dto.response.AlbumSummaryResponse
+import com.out_focusing.out_focusing_backend.album.dto.response.GenerateAlbumResponse
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.data.domain.Pageable

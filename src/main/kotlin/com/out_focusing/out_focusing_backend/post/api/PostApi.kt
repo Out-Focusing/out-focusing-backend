@@ -1,7 +1,11 @@
 package com.out_focusing.out_focusing_backend.post.api
 
 import com.out_focusing.out_focusing_backend.post.application.PostApplication
-import com.out_focusing.out_focusing_backend.post.dto.*
+import com.out_focusing.out_focusing_backend.post.dto.request.GeneratePostRequest
+import com.out_focusing.out_focusing_backend.post.dto.request.ModifyPostRequest
+import com.out_focusing.out_focusing_backend.post.dto.response.GeneratePostResponse
+import com.out_focusing.out_focusing_backend.post.dto.response.PostDetailResponse
+import com.out_focusing.out_focusing_backend.post.dto.response.PostSummaryResponse
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.data.domain.Pageable

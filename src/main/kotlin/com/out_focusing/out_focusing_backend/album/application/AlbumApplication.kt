@@ -2,7 +2,11 @@ package com.out_focusing.out_focusing_backend.album.application
 
 import com.out_focusing.out_focusing_backend.album.domain.Album
 import com.out_focusing.out_focusing_backend.album.domain.AlbumBookmark
-import com.out_focusing.out_focusing_backend.album.dto.*
+import com.out_focusing.out_focusing_backend.album.dto.request.GenerateAlbumRequest
+import com.out_focusing.out_focusing_backend.album.dto.request.ModifyAlbumRequest
+import com.out_focusing.out_focusing_backend.album.dto.response.AlbumDetailResponse
+import com.out_focusing.out_focusing_backend.album.dto.response.AlbumSummaryResponse
+import com.out_focusing.out_focusing_backend.album.dto.response.GenerateAlbumResponse
 import com.out_focusing.out_focusing_backend.album.repository.AlbumBookmarkRepository
 import com.out_focusing.out_focusing_backend.album.repository.AlbumRepository
 import com.out_focusing.out_focusing_backend.global.error.CustomException.*
