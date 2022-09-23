@@ -12,13 +12,13 @@ class UserProfile(
     @Column(name = "user_id")
     val userId: String,
     @Column(length = 20)
-    val name: String,
+    var name: String,
     @Column(length = 30)
-    val contact: String,
+    var contact: String,
     @Column(name = "profile_image", length = 100)
-    val profileImage: String,
+    var profileImage: String,
     @Column(length = 255)
-    val readme: String,
+    var readme: String,
     @OneToMany(mappedBy = "followedUser", fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
     val followedUsers: List<FollowedUser>,
     @OneToMany(mappedBy = "followingUser", fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])

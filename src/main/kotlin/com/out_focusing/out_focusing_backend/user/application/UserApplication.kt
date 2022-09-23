@@ -2,6 +2,8 @@ package com.out_focusing.out_focusing_backend.user.application
 
 import com.out_focusing.out_focusing_backend.global.error.CustomException.*
 import com.out_focusing.out_focusing_backend.user.domain.FollowedUser
+import com.out_focusing.out_focusing_backend.user.domain.UserProfile
+import com.out_focusing.out_focusing_backend.user.dto.ModifyUserProfileRequest
 import com.out_focusing.out_focusing_backend.user.dto.UserProfileResponse
 import com.out_focusing.out_focusing_backend.user.dto.UserProfileSummaryResponse
 import com.out_focusing.out_focusing_backend.user.repository.FollowedUserRepository
@@ -98,5 +100,21 @@ class UserApplication(
         } else {
             throw UserNotFollowedException
         }
+    }
+
+    @Transactional
+    fun modifyUserProfile(request: ModifyUserProfileRequest) {
+        val userDetails = SecurityContextHolder.getContext().authentication.principal as UserDetails
+
+        val myProfile = userProfileRepository.findById(userDetails.username).orElseThrow { UserNotExistsException }
+
+        request.apply {
+            name?.let { myProfile.name = it }
+            contact?.let { myProfile.contact = it }
+            profileImage?.let { myProfile.profileImage = it }
+            readme?.let { myProfile.readme = it }
+        }
+
+        userProfileRepository.save(myProfile)
     }
 }
