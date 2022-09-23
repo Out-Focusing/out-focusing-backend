@@ -1,4 +1,4 @@
-package com.out_focusing.out_focusing_backend.album.dto
+package com.out_focusing.out_focusing_backend.album.dto.request
 
 import javax.validation.constraints.Size
 

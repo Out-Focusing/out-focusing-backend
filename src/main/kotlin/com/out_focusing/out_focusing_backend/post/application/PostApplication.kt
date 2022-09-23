@@ -6,7 +6,11 @@ import com.out_focusing.out_focusing_backend.post.domain.Post
 import com.out_focusing.out_focusing_backend.post.domain.PostBookmark
 import com.out_focusing.out_focusing_backend.post.domain.PostContent
 import com.out_focusing.out_focusing_backend.post.domain.PostHashtag
-import com.out_focusing.out_focusing_backend.post.dto.*
+import com.out_focusing.out_focusing_backend.post.dto.request.GeneratePostRequest
+import com.out_focusing.out_focusing_backend.post.dto.request.ModifyPostRequest
+import com.out_focusing.out_focusing_backend.post.dto.response.GeneratePostResponse
+import com.out_focusing.out_focusing_backend.post.dto.response.PostDetailResponse
+import com.out_focusing.out_focusing_backend.post.dto.response.PostSummaryResponse
 import com.out_focusing.out_focusing_backend.post.repository.*
 import com.out_focusing.out_focusing_backend.user.repository.UserProfileRepository
 import org.springframework.data.domain.Pageable

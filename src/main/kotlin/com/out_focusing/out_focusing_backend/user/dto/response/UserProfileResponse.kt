@@ -1,6 +1,5 @@
-package com.out_focusing.out_focusing_backend.user.dto
+package com.out_focusing.out_focusing_backend.user.dto.response
 
-import com.out_focusing.out_focusing_backend.user.domain.FollowedUser
 import com.out_focusing.out_focusing_backend.user.domain.UserProfile
 
 data class UserProfileResponse(

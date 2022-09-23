@@ -2,10 +2,9 @@ package com.out_focusing.out_focusing_backend.user.application
 
 import com.out_focusing.out_focusing_backend.global.error.CustomException.*
 import com.out_focusing.out_focusing_backend.user.domain.FollowedUser
-import com.out_focusing.out_focusing_backend.user.domain.UserProfile
-import com.out_focusing.out_focusing_backend.user.dto.ModifyUserProfileRequest
-import com.out_focusing.out_focusing_backend.user.dto.UserProfileResponse
-import com.out_focusing.out_focusing_backend.user.dto.UserProfileSummaryResponse
+import com.out_focusing.out_focusing_backend.user.dto.request.ModifyUserProfileRequest
+import com.out_focusing.out_focusing_backend.user.dto.response.UserProfileResponse
+import com.out_focusing.out_focusing_backend.user.dto.response.UserProfileSummaryResponse
 import com.out_focusing.out_focusing_backend.user.repository.FollowedUserRepository
 import com.out_focusing.out_focusing_backend.user.repository.UserProfileRepository
 import org.springframework.security.core.context.SecurityContextHolder
