@@ -157,10 +157,9 @@ class AlbumApplication(
 
         val userProfile = userProfileRepository.findById(userDetails.username).orElseThrow { UserNotExistsException }
 
-        val resultAlbumIds = listOf<Long>()
+        val resultAlbumIds = albumRepository.searchAlbumsByTitleAndContent(userProfile, keyword, pageable)
 
-        return albumRepository.findAlbumsByAlbumId(resultAlbumIds, userProfile)
-            .map { album -> AlbumSummaryResponse.toAlbumSummaryResponse(album, userProfile) }
+        return resultAlbumIds.map { album -> AlbumSummaryResponse.toAlbumSummaryResponse(album, userProfile) }
     }
 
     fun getMyBookmarkAlbum(pageable: Pageable): List<AlbumSummaryResponse> {
