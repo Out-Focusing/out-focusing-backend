@@ -14,4 +14,5 @@ interface AlbumCustomRepository {
     fun findAlbumsByAlbumId(albumIds: List<Long>, userProfile: UserProfile?): List<Album>
     fun getMyBookmarkAlbum(userProfile: UserProfile?, pageable: Pageable): List<Album>
     fun getUpdatedBookmarkAlbumAfterDate(userProfile: UserProfile?, date: LocalDateTime): List<Album>
+    fun searchAlbumsByTitleAndContent(userProfile: UserProfile?, keyword: String, pageable: Pageable): List<Album>
 }

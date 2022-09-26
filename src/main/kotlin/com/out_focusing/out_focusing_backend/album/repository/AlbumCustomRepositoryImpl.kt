@@ -5,6 +5,7 @@ import com.out_focusing.out_focusing_backend.album.domain.QAlbum
 import com.out_focusing.out_focusing_backend.album.domain.QAlbumBookmark
 import com.out_focusing.out_focusing_backend.post.domain.QPost
 import com.out_focusing.out_focusing_backend.user.domain.UserProfile
+import com.querydsl.core.types.dsl.Expressions
 import com.querydsl.jpa.impl.JPAQueryFactory
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Repository
@@ -144,5 +145,32 @@ class AlbumCustomRepositoryImpl(
             .fetch()
 
         return resultAlbums
+    }
+
+    override fun searchAlbumsByTitleAndContent(
+        userProfile: UserProfile?,
+        keyword: String,
+        pageable: Pageable
+    ): List<Album> {
+        jpaQueryFactory.selectFrom(QAlbumBookmark.albumBookmark)
+            .leftJoin(QAlbumBookmark.albumBookmark.album)
+            .fetchJoin()
+            .leftJoin(QAlbumBookmark.albumBookmark.userProfile)
+            .fetchJoin()
+            .where(QAlbumBookmark.albumBookmark.album.writerUserProfile.eq(userProfile))
+            .fetch()
+
+        val permission = QAlbum.album.writerUserProfile.eq(userProfile).or(QAlbum.album.secret.isFalse)
+
+        val booleanTemplate =
+            Expressions.numberTemplate(Double::class.javaObjectType, "function('match two index', {0}, {1}, {2})", QAlbum.album.title, QAlbum.album.content, keyword)
+
+        return jpaQueryFactory.selectFrom(QAlbum.album)
+            .leftJoin(QAlbum.album.bookmarkUsers)
+            .fetchJoin()
+            .where(booleanTemplate.gt(0).and(permission))
+            .offset(pageable.offset)
+            .limit(pageable.pageSize.toLong())
+            .fetch()
     }
 }
