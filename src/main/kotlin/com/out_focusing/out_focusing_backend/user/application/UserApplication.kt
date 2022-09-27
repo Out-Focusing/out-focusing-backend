@@ -64,6 +64,16 @@ class UserApplication(
         }
     }
 
+    fun searchUsers(keyword: String): List<UserProfileSummaryResponse> {
+        val userDetails = SecurityContextHolder.getContext().authentication.principal as UserDetails
+
+        val userProfile = userProfileRepository.findById(userDetails.username).orElseThrow { UserNotExistsException }
+
+        return userProfileRepository.searchUsersByKeyword(keyword, userProfile).map {
+            UserProfileSummaryResponse.toUserProfileSummaryResponse(it, userProfile)
+        }
+    }
+
     @Transactional
     fun followUser(userId: String) {
         val userDetails = SecurityContextHolder.getContext().authentication.principal as UserDetails

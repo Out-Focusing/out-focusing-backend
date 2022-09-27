@@ -47,4 +47,18 @@ class UserProfileCustomRepositoryImpl(
 
         return result
     }
+
+    override fun searchUsersByKeyword(keyword: String, userProfile: UserProfile?): List<UserProfile> {
+        val result = jpaQueryFactory.selectFrom(QUserProfile.userProfile)
+            .where(QUserProfile.userProfile.name.contains(keyword))
+            .fetch()
+
+        jpaQueryFactory.selectFrom(QUserProfile.userProfile)
+            .leftJoin(QUserProfile.userProfile.followedUsers)
+            .fetchJoin()
+            .where(QUserProfile.userProfile.`in`(result))
+            .fetch()
+
+        return result
+    }
 }
