@@ -14,6 +14,7 @@ interface PostCustomRepository {
     fun findPostsByUserProfile(targetUserProfile: UserProfile, pageable: Pageable, myUserProfile: UserProfile?): List<Post>
     fun findPostsByUserBookmark(targetUserProfile: UserProfile, pageable: Pageable, myUserProfile: UserProfile?): List<Post>
     fun findPostsByUsersAfterDate(userProfiles: List<UserProfile>, pageable: Pageable, myUserProfile: UserProfile?, date: LocalDateTime): List<Post>
+    fun searchPostsByKeyword(keyword: String, pageable: Pageable, userProfile: UserProfile?): List<Post>
     fun fetchJoinPosts(posts: List<Post>)
     fun deleteAllPostHashtagByPost(post: Post)
     fun deleteAllPostContentsByPost(post: Post)

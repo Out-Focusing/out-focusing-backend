@@ -4,6 +4,7 @@ import com.out_focusing.out_focusing_backend.album.domain.Album
 import com.out_focusing.out_focusing_backend.global.error.CustomException.*
 import com.out_focusing.out_focusing_backend.post.domain.*
 import com.out_focusing.out_focusing_backend.user.domain.UserProfile
+import com.querydsl.core.types.dsl.Expressions
 import com.querydsl.jpa.impl.JPAQueryFactory
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Repository
@@ -124,6 +125,42 @@ class PostCustomRepositoryImpl(
                 .and(permission))
             .offset(pageable.offset)
             .limit(pageable.pageSize.toLong())
+            .fetch()
+
+        fetchJoinPosts(result)
+
+        return result
+    }
+
+    override fun searchPostsByKeyword(keyword: String, pageable: Pageable, userProfile: UserProfile?): List<Post> {
+        val permission = QPost.post.writerUserProfile.eq(userProfile).or(QPost.post.secret.isFalse)
+
+        val hashTagMatchTemplate = Expressions.numberTemplate(
+            Double::class.javaObjectType,
+            "function('match one index', {0}, {1})",
+            QPostHashtag.postHashtag.hashtag,
+            keyword
+        )
+
+        val result = jpaQueryFactory.selectFrom(QPost.post)
+            .join(QPostHashtag.postHashtag)
+            .on(QPostHashtag.postHashtag.post.eq(QPost.post))
+            .leftJoin(QPost.post.album)
+            .fetchJoin()
+            .leftJoin(QPost.post.writerUserProfile)
+            .fetchJoin()
+            .where(hashTagMatchTemplate.gt(0).and(permission))
+            .offset(pageable.offset)
+            .limit(pageable.pageSize.toLong())
+            .distinct()
+            .fetch()
+
+        jpaQueryFactory.selectFrom(QPost.post)
+            .leftJoin(QPost.post.album)
+            .fetchJoin()
+            .leftJoin(QPost.post.writerUserProfile)
+            .fetchJoin()
+            .where(QPost.post.`in`(result))
             .fetch()
 
         fetchJoinPosts(result)
