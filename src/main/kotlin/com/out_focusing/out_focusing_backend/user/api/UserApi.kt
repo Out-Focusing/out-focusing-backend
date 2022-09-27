@@ -6,6 +6,7 @@ import com.out_focusing.out_focusing_backend.user.dto.response.UserProfileRespon
 import com.out_focusing.out_focusing_backend.user.dto.response.UserProfileSummaryResponse
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
+import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
@@ -46,6 +47,12 @@ class UserApi(
     @GetMapping("/{userId}/followings")
     fun getUsersFollowings(@PathVariable userId: String): List<UserProfileSummaryResponse> {
         return userApplication.getUsersFollowings(userId)
+    }
+
+    @Operation(summary = "Search Users")
+    @GetMapping("")
+    fun searchUsers(@RequestParam(name = "keyword") keyword: String, pageable: Pageable): List<UserProfileSummaryResponse> {
+        return userApplication.searchUsers(keyword)
     }
 
     @Operation(summary = "Follow User")
