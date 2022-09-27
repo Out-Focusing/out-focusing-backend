@@ -131,10 +131,7 @@ class PostApplication(
 
         val userProfile = userProfileRepository.findById(userId).orElseThrow { UserNotExistsException }
 
-//        val resultPostIds = esPostRepository.findByKeyword(keyword, pageable).map { it.id }.toList()
-        val resultPostIds = listOf<Long>()
-
-        return postRepository.findPostsByPostIds(resultPostIds, userProfile).map {
+        return postRepository.searchPostsByKeyword(keyword, pageable, userProfile).map {
             PostSummaryResponse.toPostSummaryResponse(it, userProfile)
         }
 
